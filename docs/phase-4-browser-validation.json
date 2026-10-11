@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "checks": [
+    "Arabic exact FX and source fees commit both wallet legs once under repeated save",
+    "Transfer amount fee notes and saved manual rate survive a real IndexedDB reload",
+    "Only fees appear as expenses; linked fees cannot be edited independently",
+    "Editing principal fee and FX reverses old effects and records a replacement",
+    "Stale two-tab edit rejects every effect and leaves exact balances intact",
+    "Hiding either wallet clears an open editor and masks both amounts across tabs",
+    "Insufficient funds reject the complete transfer without either partial leg",
+    "Cancellation reverses both legs and fees while retaining readonly history after reload",
+    "Offline transfer and reload preserve both balances and exact fee",
+    "Transfer history search filters real persisted records",
+    "Arabic RTL dark mobile transfer accepts exact money and manual FX",
+    "Two active wallets can transfer in the reverse direction with a new manual quote",
+    "No browser runtime errors or external resource requests"
+  ],
+  "runtimeErrors": [],
+  "externalRequests": []
+}

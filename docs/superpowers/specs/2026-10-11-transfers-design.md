@@ -35,6 +35,10 @@ Add a responsive transfer history/editor, accessible through wallets and a
 GoRouter /transfers route; preserve the existing six-item mobile navigation.
 Reuse design-system components, Arabic RTL/English and themes. Show direction,
 amount, received amount, fees, rate, notes, status and traceable transfer ID.
+An explicit swap action supports both directions with exactly two wallets and
+clears currency-specific values/FX when the source currency changes.
+Use bundled Material arrow icons and an ASCII slash in currency-pair input
+labels: the text arrow glyph triggers an engine Symbols-font CDN fallback.
 Hide monetary values for hidden wallets; fail closed during wallet refresh and
 clear exposed editor values when either wallet becomes hidden. Busy forms lock
 all actions and keep command IDs across same-payload retries.
