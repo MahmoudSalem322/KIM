@@ -4,7 +4,7 @@ import '../domain/operation_id.dart';
 
 final class AppDatabase {
   AppDatabase._(this.database);
-  static const schemaVersion = 2;
+  static const schemaVersion = 3;
   static final settings = stringMapStoreFactory.store('settings');
   static final _receipts = stringMapStoreFactory.store('operation_receipts');
   final Database database;
@@ -30,6 +30,13 @@ final class AppDatabase {
             'languageCode': legacy?['locale'] ?? 'ar',
             'theme': legacy?['theme'] ?? 'system',
           });
+        }
+        if (oldVersion < 3) {
+          // Wallet stores are created lazily, without fabricated balances.
+          await stringMapStoreFactory
+              .store('schema')
+              .record('walletLedger')
+              .put(db, {'version': 1});
         }
       },
     );
