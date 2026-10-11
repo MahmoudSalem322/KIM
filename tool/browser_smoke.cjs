@@ -75,7 +75,7 @@ async function selected(page, name) {
     checks.push('Offline reload restores app, settings and navigation');
     await context.setOffline(false);
     await page.setViewportSize({width:390,height:844});
-    await page.getByRole('button',{name:/Settings/}).click();
+    await page.getByRole('tab',{name:'Settings',exact:true}).click();
     await page.getByRole('button',{name:'العربية',exact:true}).click(); await selected(page,'العربية');
     await page.screenshot({path:path.join(screenshots,'preview-ar-mobile-dark.png')});
     checks.push('Arabic RTL mobile navigation and settings');
@@ -88,6 +88,7 @@ async function selected(page, name) {
       const result = await page.evaluate(()=>globalThis.kimMoneyResult);
       assert.equal(result,'7 JavaScript money/ID checks passed'); checks.push(result);
     }
+    console.log('External requests:', [...external]);
     assert.equal(external.size,0,'Runtime must not fetch external resources');
     assert.deepEqual(errors,[],'No browser runtime exceptions');
     checks.push('No external requests or browser runtime exceptions');
