@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_strings.dart';
-import '../../../shared/design_system/components.dart';
 import 'dashboard_wallet_overview.dart';
+import 'dashboard_transactions.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -107,46 +107,7 @@ class DashboardPage extends StatelessWidget {
           },
         ),
         const SizedBox(height: 28),
-        WalletCard(
-          child: SizedBox(
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(s('activity'), style: theme.textTheme.titleLarge),
-                const SizedBox(height: 28),
-                Center(
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.receipt_long_outlined,
-                        size: 36,
-                        color: theme.colorScheme.onSurfaceVariant.withValues(
-                          alpha: .6,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        s('noActivity'),
-                        style: theme.textTheme.titleMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        s('noActivitySub'),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        const DashboardTransactions(),
         const SizedBox(height: 28),
         Text(s('essentials'), style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),

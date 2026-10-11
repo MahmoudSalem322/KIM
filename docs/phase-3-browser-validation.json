@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "checks": [
+    "Exact income and Arabic decimal expense update real wallet ledger",
+    "Income expense notes and historical dates persist across reload",
+    "Search type and inclusive business-date filters select actual records",
+    "Editing a past expense preserves opening and corrects the net balance",
+    "Live privacy masks transaction history and clears an open editor across tabs",
+    "Stale two-tab edit rejected without duplicate effects or lost balance",
+    "Confirmed deletion reverses once; cancelled evidence and balance survive reload",
+    "Offline create and reload retain exact transactions and wallet balance",
+    "Dashboard recent activity uses persisted real transactions",
+    "Arabic dark mobile entry accepts historical income and exact decimals",
+    "No browser runtime errors or external resource requests"
+  ],
+  "runtimeErrors": [],
+  "externalRequests": []
+}

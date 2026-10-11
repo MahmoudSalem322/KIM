@@ -93,7 +93,7 @@ final class Wallet {
   );
 }
 
-enum WalletEntryKind { opening, adjustment }
+enum WalletEntryKind { opening, adjustment, income, expense, reversal }
 
 final class WalletEntry {
   const WalletEntry({
@@ -106,8 +106,10 @@ final class WalletEntry {
     required this.at,
     required this.reason,
     required this.sequence,
+    this.transactionId = '',
   });
   final String operationId, walletId, reason;
+  final String transactionId;
   final WalletEntryKind kind;
   final Money delta, before, after;
   final DateTime at;
@@ -121,6 +123,7 @@ final class WalletEntry {
     'at': at.toIso8601String(),
     'reason': reason,
     'sequence': sequence,
+    if (transactionId.isNotEmpty) 'transactionId': transactionId,
   };
   factory WalletEntry.fromJson(String id, Map<String, Object?> value) =>
       WalletEntry(
@@ -135,6 +138,7 @@ final class WalletEntry {
         at: DateTime.parse(value['at'] as String),
         reason: value['reason'] as String,
         sequence: value['sequence'] as int,
+        transactionId: value['transactionId'] as String? ?? '',
       );
 }
 
@@ -156,7 +160,16 @@ final class WalletSnapshot {
           entry.delta.currency != wallet.currency ||
           entry.before.currency != wallet.currency ||
           entry.after.currency != wallet.currency ||
-          (previousSequence >= 0 && entry.kind != WalletEntryKind.adjustment) ||
+          (previousSequence >= 0 && entry.kind == WalletEntryKind.opening) ||
+          (entry.kind == WalletEntryKind.income &&
+              entry.delta.minorUnits <= BigInt.zero) ||
+          (entry.kind == WalletEntryKind.expense &&
+              entry.delta.minorUnits >= BigInt.zero) ||
+          ((entry.kind == WalletEntryKind.income ||
+                  entry.kind == WalletEntryKind.expense ||
+                  entry.kind == WalletEntryKind.reversal) &&
+              (entry.transactionId.isEmpty ||
+                  entry.delta.minorUnits == BigInt.zero)) ||
           (entry.kind == WalletEntryKind.adjustment &&
               entry.reason.trim().isEmpty) ||
           entry.before != total ||
