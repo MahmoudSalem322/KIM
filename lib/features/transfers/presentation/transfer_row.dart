@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/money.dart';
 import '../../../shared/design_system/components.dart';
 import '../../wallets/domain/wallet.dart';
+import '../../wallets/presentation/wallet_copy.dart' show entryDate;
 import '../domain/wallet_transfer.dart';
 import 'transfer_copy.dart';
 import 'transfer_editor.dart';
@@ -155,11 +156,18 @@ class _TransferRowState extends ConsumerState<TransferRow> {
             ],
           ),
           const SizedBox(height: 18),
-          Text(
-            '${s('rate')}: 1 ${d.amount.currency.code} = ${d.rate.decimal} ${t.received.currency.code}',
-            textDirection: TextDirection.ltr,
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              Text('${s('rate')}:'),
+              Text(
+                '1 ${d.amount.currency.code} = ${d.rate.decimal} ${t.received.currency.code}',
+                textDirection: TextDirection.ltr,
+              ),
+            ],
           ),
-          Text('${s('recorded')}: ${t.createdAt.toLocal().toIso8601String()}'),
+          Text('${s('recorded')}: ${entryDate(context, t.createdAt)}'),
           if (d.notes.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(d.notes),
