@@ -4,7 +4,7 @@ import '../domain/operation_id.dart';
 
 final class AppDatabase {
   AppDatabase._(this.database);
-  static const schemaVersion = 4;
+  static const schemaVersion = 5;
   static final settings = stringMapStoreFactory.store('settings');
   static final _receipts = stringMapStoreFactory.store('operation_receipts');
   final Database database;
@@ -43,6 +43,12 @@ final class AppDatabase {
               .store('schema')
               .record('transactions')
               .put(db, {'version': 1});
+        }
+        if (oldVersion < 5) {
+          await stringMapStoreFactory.store('schema').record('transfers').put(
+            db,
+            {'version': 1},
+          );
         }
       },
     );

@@ -108,6 +108,11 @@ const _copy = <String, (String, String)>{
   'health': ('صحة', 'Health'),
   'shopping': ('تسوق', 'Shopping'),
   'otherExpense': ('مصروف آخر', 'Other expense'),
+  'transferFee': ('رسوم تحويل', 'Transfer fee'),
+  'error-linkedTransfer': (
+    'عدّل الرسوم من التحويل المرتبط.',
+    'Edit fees through the linked transfer.',
+  ),
   'error': (
     'تعذر الحفظ أو تحميل البيانات. حاول مجددًا.',
     'Unable to save or load data. Try again.',

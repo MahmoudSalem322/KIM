@@ -13,6 +13,7 @@ import '../features/settings/presentation/settings_page.dart';
 import '../shared/design_system/components.dart';
 import '../shared/widgets/page_viewport.dart';
 import 'shell.dart';
+import '../features/transfers/presentation/transfers_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
@@ -40,6 +41,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/transactions',
             builder: (_, _) => const PageViewport(child: TransactionsPage()),
+          ),
+          GoRoute(
+            path: '/transfers',
+            builder: (_, _) => const PageViewport(child: TransfersPage()),
           ),
           GoRoute(
             path: '/budgets',

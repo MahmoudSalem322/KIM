@@ -9,6 +9,7 @@ import 'wallet_editor.dart';
 import 'wallet_adjustment.dart';
 import 'wallet_widgets.dart';
 import '../../transactions/presentation/transaction_copy.dart';
+import '../../transfers/presentation/transfer_copy.dart';
 
 class WalletDetailPage extends StatelessWidget {
   const WalletDetailPage({super.key, required this.id});
@@ -19,6 +20,7 @@ class WalletDetailPage extends StatelessWidget {
       final matches = all.where((s) => s.wallet.id == id);
       final s = WalletCopy.of(context), theme = Theme.of(context);
       final ts = TransactionCopy.of(context);
+      final fs = TransferCopy.of(context);
       if (matches.isEmpty) {
         return Column(
           children: [
@@ -159,6 +161,9 @@ class WalletDetailPage extends StatelessWidget {
                           WalletEntryKind.income => ts('incomeLedger'),
                           WalletEntryKind.expense => ts('expenseLedger'),
                           WalletEntryKind.reversal => ts('reversalLedger'),
+                          WalletEntryKind.transferOut => fs('out'),
+                          WalletEntryKind.transferIn => fs('in'),
+                          WalletEntryKind.transferReversal => fs('reverse'),
                         }, style: theme.textTheme.titleMedium),
                       ),
                     ],
@@ -168,7 +173,17 @@ class WalletDetailPage extends StatelessWidget {
                   if (entry.reason.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     Text(
-                      entry.transactionId.isEmpty
+                      entry.transferId.isNotEmpty
+                          ? fs(
+                              entry.kind == WalletEntryKind.transferOut
+                                  ? 'out'
+                                  : entry.kind == WalletEntryKind.transferIn
+                                  ? 'in'
+                                  : entry.kind == WalletEntryKind.expense
+                                  ? 'fee'
+                                  : 'reverse',
+                            )
+                          : entry.transactionId.isEmpty
                           ? entry.reason
                           : ts(
                               entry.kind == WalletEntryKind.reversal
@@ -217,6 +232,14 @@ class WalletDetailPage extends StatelessWidget {
                     TextButton(
                       onPressed: () => context.go('/transactions'),
                       child: Text(ts('viewAll')),
+                    ),
+                  ],
+                  if (entry.transferId.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text('${fs('id')}: ${entry.transferId}'),
+                    TextButton(
+                      onPressed: () => context.go('/transfers'),
+                      child: Text(fs('navigation')),
                     ),
                   ],
                 ],
