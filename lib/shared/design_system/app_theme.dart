@@ -19,6 +19,9 @@ abstract final class AppThemeData {
     final base = ThemeData(useMaterial3: true, colorScheme: scheme);
     final text = base.textTheme.apply(
       fontFamily: language == 'ar' ? 'NotoSansArabic' : 'NotoSans',
+      // Language choices contain both scripts, even under the English theme.
+      // Resolve their glyphs from bundled fonts instead of engine CDN fallbacks.
+      fontFamilyFallback: const ['NotoSansArabic', 'NotoSans'],
       bodyColor: scheme.onSurface,
       displayColor: scheme.onSurface,
     );
