@@ -267,7 +267,7 @@ class _TransferEditorState extends ConsumerState<TransferEditor> {
                 WalletTextField(
                   key: const ValueKey('transfer-rate'),
                   label:
-                      '${s('rate')} (${source.currency.code} → ${destination.currency.code})',
+                      '${s('rate')} (${source.currency.code} / ${destination.currency.code})',
                   controller: rate,
                   enabled:
                       !busy &&

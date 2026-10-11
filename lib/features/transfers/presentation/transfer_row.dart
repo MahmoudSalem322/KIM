@@ -111,9 +111,30 @@ class _TransferRowState extends ConsumerState<TransferRow> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  '${from?.wallet.name ?? '—'} → ${to?.wallet.name ?? '—'}',
-                  style: theme.textTheme.titleLarge,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${s('source')}: ${from?.wallet.name ?? '—'}',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 18,
+                          color: theme.colorScheme.primary,
+                        ),
+                        Text(
+                          '${s('destination')}: ${to?.wallet.name ?? '—'}',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
