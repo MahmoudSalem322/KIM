@@ -82,12 +82,14 @@ class _WalletAdjustmentState extends ConsumerState<WalletAdjustment> {
   @override
   Widget build(BuildContext context) {
     final s = WalletCopy.of(context);
-    final latest = ref
-        .watch(walletsProvider)
-        .asData
-        ?.value
-        .where((w) => w.wallet.id == widget.snapshot.wallet.id)
-        .firstOrNull;
+    final walletState = ref.watch(walletsProvider);
+    final latest =
+        (walletState.isLoading || walletState.hasError
+                ? null
+                : walletState.asData)
+            ?.value
+            .where((w) => w.wallet.id == widget.snapshot.wallet.id)
+            .firstOrNull;
     final hidden = latest?.wallet.hidden ?? true;
     if (hidden && !lastHidden) {
       // Conceal immediately, then remove the automatically prefilled amount.

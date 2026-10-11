@@ -1,0 +1,62 @@
+{
+  "sourceCommit": "b25836c90ce5a3cc6e62c0655f48a03eae3914a4",
+  "passed": true,
+  "foundation": {
+    "passed": true,
+    "checks": [
+      "Arabic RTL desktop dashboard and accessible navigation",
+      "English and dark theme controls apply",
+      "Localized information dialog opens and closes",
+      "All financial sections navigate to real empty states",
+      "Language and theme survive full page reload",
+      "Offline reload restores app, settings and navigation",
+      "Arabic RTL mobile navigation and settings",
+      "Short desktop sidebar remains usable",
+      "7 JavaScript money/ID checks passed",
+      "No external requests or browser runtime exceptions"
+    ],
+    "cachedFiles": 42,
+    "externalRequests": [],
+    "runtimeErrors": []
+  },
+  "wallets": {
+    "passed": true,
+    "checks": [
+      "Create customized wallet with exact Arabic opening amount",
+      "Traceable opening entry and persistent detail route",
+      "Metadata edits preserve original opening and immutable currency",
+      "Settlement records exact delta before after reason and operation ID",
+      "Hidden balances mask detail history and dashboard totals",
+      "Wallet edits and ledger survive full reload",
+      "Two-tab privacy update clears and conceals an already open settlement dialog",
+      "Two-tab stale settlement rejected without a duplicate or overwritten entry",
+      "Two-tab stale reorder rejected; successful order persists",
+      "Huge JavaScript amount and custom six-decimal currency persist exactly",
+      "Archive retains history disables financial editing and permits privacy",
+      "Restore retains balance and appends to active order",
+      "Offline reload and real offline edit survive another reload",
+      "Arabic dark mobile creation supports exact negative opening",
+      "No runtime errors or external resources"
+    ],
+    "externalRequests": [],
+    "runtimeErrors": []
+  },
+  "transactions": {
+    "passed": true,
+    "checks": [
+      "Exact income and Arabic decimal expense update real wallet ledger",
+      "Income expense notes and historical dates persist across reload",
+      "Search type and inclusive business-date filters select actual records",
+      "Editing a past expense preserves opening and corrects the net balance",
+      "Live privacy masks transaction history and clears an open editor across tabs",
+      "Stale two-tab edit rejected without duplicate effects or lost balance",
+      "Confirmed deletion reverses once; cancelled evidence and balance survive reload",
+      "Offline create and reload retain exact transactions and wallet balance",
+      "Dashboard recent activity uses persisted real transactions",
+      "Arabic dark mobile entry accepts historical income and exact decimals",
+      "No browser runtime errors or external resource requests"
+    ],
+    "runtimeErrors": [],
+    "externalRequests": []
+  }
+}

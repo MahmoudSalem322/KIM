@@ -8,6 +8,7 @@ import 'wallet_copy.dart';
 import 'wallet_editor.dart';
 import 'wallet_adjustment.dart';
 import 'wallet_widgets.dart';
+import '../../transactions/presentation/transaction_copy.dart';
 
 class WalletDetailPage extends StatelessWidget {
   const WalletDetailPage({super.key, required this.id});
@@ -17,6 +18,7 @@ class WalletDetailPage extends StatelessWidget {
     builder: (all) {
       final matches = all.where((s) => s.wallet.id == id);
       final s = WalletCopy.of(context), theme = Theme.of(context);
+      final ts = TransactionCopy.of(context);
       if (matches.isEmpty) {
         return Column(
           children: [
@@ -151,14 +153,13 @@ class WalletDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
-                          s(
-                            entry.kind == WalletEntryKind.opening
-                                ? 'opening'
-                                : 'adjustment',
-                          ),
-                          style: theme.textTheme.titleMedium,
-                        ),
+                        child: Text(switch (entry.kind) {
+                          WalletEntryKind.opening => s('opening'),
+                          WalletEntryKind.adjustment => s('adjustment'),
+                          WalletEntryKind.income => ts('incomeLedger'),
+                          WalletEntryKind.expense => ts('expenseLedger'),
+                          WalletEntryKind.reversal => ts('reversalLedger'),
+                        }, style: theme.textTheme.titleMedium),
                       ),
                     ],
                   ),
@@ -166,11 +167,23 @@ class WalletDetailPage extends StatelessWidget {
                   Text(entryDate(context, entry.at)),
                   if (entry.reason.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    Text(entry.reason),
+                    Text(
+                      entry.transactionId.isEmpty
+                          ? entry.reason
+                          : ts(
+                              entry.kind == WalletEntryKind.reversal
+                                  ? (entry.reason == 'edit'
+                                        ? 'editReversal'
+                                        : 'cancelReversal')
+                                  : entry.reason,
+                            ),
+                    ),
                   ],
                   const SizedBox(height: 14),
                   _HistoryAmount(
-                    label: s('difference'),
+                    label: entry.transactionId.isEmpty
+                        ? s('difference')
+                        : ts('amount'),
                     amount: entry.delta,
                     hidden: w.hidden,
                   ),
@@ -198,6 +211,14 @@ class WalletDetailPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (entry.transactionId.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text('${ts('transactionId')}: ${entry.transactionId}'),
+                    TextButton(
+                      onPressed: () => context.go('/transactions'),
+                      child: Text(ts('viewAll')),
+                    ),
+                  ],
                 ],
               ),
             ),

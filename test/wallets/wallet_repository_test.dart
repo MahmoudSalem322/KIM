@@ -268,7 +268,7 @@ void main() {
           .put(old, {'request': 'keep'});
       await old.close();
       final migrated = await AppDatabase.open(databaseFactoryIo, legacyPath);
-      expect(migrated.database.version, 3);
+      expect(migrated.database.version, AppDatabase.schemaVersion);
       expect(await LocalWalletRepository(migrated).load(), isEmpty);
       expect(
         (await AppDatabase.settings

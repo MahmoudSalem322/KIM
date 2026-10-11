@@ -1,6 +1,6 @@
 # Kim development rules
 
-- Implement one user-approved phase at a time. Phase 2 requires explicit approval.
+- Implement one user-approved phase at a time. Phase 3 is authorized; subsequent phases require explicit approval.
 - Inspect existing features and dependencies before changes. Preserve working behavior.
 - Use feature-first presentation/domain/data boundaries, Riverpod and GoRouter.
 - Prioritize Flutter Web. Keep runtime offline, local and free of backend or login.
