@@ -14,7 +14,11 @@ class AppShell extends StatelessWidget {
     final s = AppStrings.of(context);
     final colors = Theme.of(context).colorScheme;
     final wide = MediaQuery.sizeOf(context).width >= 900;
-    final selected = destinations.indexWhere((d) => d.path == location);
+    final selected = destinations.indexWhere(
+      (d) =>
+          d.path == location ||
+          (d.path != '/' && location.startsWith('${d.path}/')),
+    );
     final active = selected < 0 ? 0 : selected;
     return Scaffold(
       bottomNavigationBar: wide

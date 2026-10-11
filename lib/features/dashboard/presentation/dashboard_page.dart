@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_strings.dart';
 import '../../../shared/design_system/components.dart';
+import 'dashboard_wallet_overview.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -87,45 +88,7 @@ class DashboardPage extends StatelessWidget {
                 ],
               ),
             );
-            final wallet = WalletCard(
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 88,
-                      height: 88,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: .08),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: Icon(
-                        Icons.account_balance_wallet_outlined,
-                        size: 38,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    Text(
-                      s('emptyWallet'),
-                      style: theme.textTheme.titleLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      s('noBalances'),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 28),
-                    StatusPill(label: s('local'), icon: Icons.storage_rounded),
-                  ],
-                ),
-              ),
-            );
+            const wallet = DashboardWalletOverview();
             if (constraints.maxWidth < 720) {
               return Column(
                 children: [hero, const SizedBox(height: 20), wallet],

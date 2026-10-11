@@ -304,4 +304,27 @@ void main() {
       expect((await repo.load()).length, 32);
     },
   );
+  test('missing or inconsistent opening history never becomes a fabricated balance', () async {
+    final s = await create('10');
+    final row = await LocalWalletRepository.entries
+        .record(s.wallet.id)
+        .get(db.database);
+    await LocalWalletRepository.entries.record(s.wallet.id).delete(db.database);
+    await expectLater(repo.load(), throwsA(isA<WalletFailure>()));
+    await expectLater(
+      repo.adjust(
+        op(),
+        s.wallet.id,
+        s.wallet.revision,
+        Money.parse('12', ils),
+        'Corrupt history',
+      ),
+      throwsA(isA<WalletFailure>()),
+    );
+    await LocalWalletRepository.entries.record(s.wallet.id).put(db.database, {
+      ...row!,
+      'after': Money.parse('11', ils).toJson(),
+    });
+    await expectLater(repo.load(), throwsA(isA<WalletFailure>()));
+  });
 }

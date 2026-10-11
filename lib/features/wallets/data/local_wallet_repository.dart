@@ -51,8 +51,9 @@ final class LocalWalletRepository implements WalletRepository {
     final value = await wallets.record(id).get(txn);
     if (value == null) throw const WalletFailure('notFound');
     if (value['revision'] != revision) throw const WalletFailure('conflict');
-    if (!allowArchived && value['archived'] == true)
+    if (!allowArchived && value['archived'] == true) {
       throw const WalletFailure('archived');
+    }
     return Map.of(value);
   }
 
@@ -74,15 +75,17 @@ final class LocalWalletRepository implements WalletRepository {
     Money opening,
   ) async {
     draft.validate();
-    if (opening.currency != draft.currency)
+    if (opening.currency != draft.currency) {
       throw const WalletFailure('currency');
+    }
     final id = op.id.value;
     await db.applyOnce(
       op.id,
       _request('create', op, [draft.toJson(), opening.toJson()]),
       (txn) async {
-        if (await wallets.record(id).exists(txn))
+        if (await wallets.record(id).exists(txn)) {
           throw const WalletFailure('conflict');
+        }
         final active = await wallets.find(
           txn,
           finder: Finder(filter: Filter.equals('archived', false)),
@@ -157,8 +160,9 @@ final class LocalWalletRepository implements WalletRepository {
     Money target,
     String reason,
   ) async {
-    if (reason.trim().isEmpty || reason.trim().length > 500)
+    if (reason.trim().isEmpty || reason.trim().length > 500) {
       throw const WalletFailure('reason');
+    }
     await db.applyOnce(
       op.id,
       _request('adjust', op, [id, revision, target.toJson(), reason.trim()]),
@@ -173,13 +177,17 @@ final class LocalWalletRepository implements WalletRepository {
           txn,
           finder: Finder(filter: Filter.equals('walletId', id)),
         );
-        final before = history.fold(
-          Money(BigInt.zero, currency),
-          (total, r) => total + WalletEntry.fromJson(r.key, r.value).delta,
-        );
+        final ledger =
+            history.map((r) => WalletEntry.fromJson(r.key, r.value)).toList()
+              ..sort((a, b) => a.sequence.compareTo(b.sequence));
+        final before = WalletSnapshot(
+          Wallet.fromJson(id, value),
+          ledger,
+        ).balance;
         final delta = target - before;
-        if (delta.minorUnits == BigInt.zero)
+        if (delta.minorUnits == BigInt.zero) {
           throw const WalletFailure('noChange');
+        }
         await entries
             .record(op.id.value)
             .put(
@@ -229,8 +237,9 @@ final class LocalWalletRepository implements WalletRepository {
       _request('archive', op, [id, revision, archived]),
       (txn) async {
         final value = await _current(txn, id, revision, allowArchived: true);
-        if (value['archived'] == archived)
+        if (value['archived'] == archived) {
           throw const WalletFailure('noChange');
+        }
         if (!archived) {
           final active = await wallets.find(
             txn,
@@ -265,14 +274,16 @@ final class LocalWalletRepository implements WalletRepository {
       );
       if (ids.length != ids.toSet().length ||
           ids.length != active.length ||
-          active.any((r) => !ids.contains(r.key)))
+          active.any((r) => !ids.contains(r.key))) {
         throw const WalletFailure('conflict');
+      }
       final byId = {
         for (final r in active) r.key: Map<String, Object?>.of(r.value),
       };
       for (final id in ids) {
-        if (byId[id]!['revision'] != revisions[id])
+        if (byId[id]!['revision'] != revisions[id]) {
           throw const WalletFailure('conflict');
+        }
       }
       for (var i = 0; i < ids.length; i++) {
         final value = byId[ids[i]]!;

@@ -140,11 +140,36 @@ final class WalletEntry {
 
 final class WalletSnapshot {
   WalletSnapshot(this.wallet, Iterable<WalletEntry> entries)
-    : entries = List.unmodifiable(entries);
+    : entries = List.unmodifiable(entries) {
+    if (this.entries.isEmpty ||
+        this.entries.first.kind != WalletEntryKind.opening ||
+        this.entries.first.sequence != 0 ||
+        this.entries.first.at != wallet.createdAt) {
+      throw const WalletFailure('integrity');
+    }
+    var total = Money(BigInt.zero, wallet.currency);
+    var previousSequence = -1;
+    for (final entry in this.entries) {
+      if (entry.walletId != wallet.id ||
+          entry.sequence <= previousSequence ||
+          entry.sequence > wallet.revision ||
+          entry.delta.currency != wallet.currency ||
+          entry.before.currency != wallet.currency ||
+          entry.after.currency != wallet.currency ||
+          (previousSequence >= 0 && entry.kind != WalletEntryKind.adjustment) ||
+          (entry.kind == WalletEntryKind.adjustment &&
+              entry.reason.trim().isEmpty) ||
+          entry.before != total ||
+          entry.after != total + entry.delta) {
+        throw const WalletFailure('integrity');
+      }
+      total = entry.after;
+      previousSequence = entry.sequence;
+    }
+    _balance = total;
+  }
   final Wallet wallet;
   final List<WalletEntry> entries;
-  Money get balance => entries.fold(
-    Money(BigInt.zero, wallet.currency),
-    (total, e) => total + e.delta,
-  );
+  late final Money _balance;
+  Money get balance => _balance;
 }
