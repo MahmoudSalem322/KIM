@@ -7,6 +7,8 @@ import 'package:kim/core/data/app_database.dart';
 import 'package:kim/features/settings/data/local_settings_repository.dart';
 import 'package:kim/features/settings/domain/app_settings.dart';
 import 'package:kim/features/settings/presentation/settings_controller.dart';
+import 'package:kim/features/wallets/data/local_wallet_repository.dart';
+import 'package:kim/features/wallets/presentation/wallet_providers.dart';
 
 void main() {
   Future<AppDatabase> mount(WidgetTester tester, Size size) async {
@@ -21,6 +23,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          walletRepositoryProvider.overrideWithValue(LocalWalletRepository(db)),
           settingsRepositoryProvider.overrideWithValue(
             LocalSettingsRepository(db),
           ),

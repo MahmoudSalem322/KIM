@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../core/l10n/app_strings.dart';
 import '../features/dashboard/presentation/dashboard_page.dart';
 import '../features/wallets/presentation/wallets_page.dart';
+import '../features/wallets/presentation/wallet_detail_page.dart';
 import '../features/transactions/presentation/transactions_page.dart';
 import '../features/budgets/presentation/budgets_page.dart';
 import '../features/reports/presentation/reports_page.dart';
@@ -27,6 +28,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/wallets',
             builder: (_, _) => const PageViewport(child: WalletsPage()),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => PageViewport(
+                  child: WalletDetailPage(id: state.pathParameters['id']!),
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/transactions',

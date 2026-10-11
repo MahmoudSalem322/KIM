@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": [
+    "Create customized wallet with exact Arabic opening amount",
+    "Traceable opening entry and persistent detail route",
+    "Metadata edits preserve original opening and immutable currency",
+    "Settlement records exact delta before after reason and operation ID",
+    "Hidden balances mask detail history and dashboard totals",
+    "Wallet edits and ledger survive full reload",
+    "Two-tab privacy update clears and conceals an already open settlement dialog",
+    "Two-tab stale settlement rejected without a duplicate or overwritten entry",
+    "Two-tab stale reorder rejected; successful order persists",
+    "Huge JavaScript amount and custom six-decimal currency persist exactly",
+    "Archive retains history disables financial editing and permits privacy",
+    "Restore retains balance and appends to active order",
+    "Offline reload and real offline edit survive another reload",
+    "Arabic dark mobile creation supports exact negative opening",
+    "No runtime errors or external resources"
+  ],
+  "externalRequests": [],
+  "runtimeErrors": []
+}

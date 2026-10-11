@@ -51,14 +51,19 @@ class WalletTextField extends StatelessWidget {
     this.validator,
     this.keyboardType,
     this.onChanged,
+    this.enabled = true,
+    this.obscureText = false,
   });
   final String label;
   final TextEditingController? controller;
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
+  final bool enabled, obscureText;
   @override
   Widget build(BuildContext context) => TextFormField(
+    enabled: enabled,
+    obscureText: obscureText,
     controller: controller,
     validator: validator,
     keyboardType: keyboardType,
