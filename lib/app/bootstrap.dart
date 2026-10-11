@@ -10,6 +10,8 @@ import '../features/settings/domain/app_settings.dart';
 import '../features/settings/presentation/settings_controller.dart';
 import '../features/wallets/data/local_wallet_repository.dart';
 import '../features/wallets/presentation/wallet_providers.dart';
+import '../features/transactions/data/local_transaction_repository.dart';
+import '../features/transactions/presentation/transaction_providers.dart';
 import '../shared/design_system/app_theme.dart';
 import '../shared/design_system/components.dart';
 import 'kim_app.dart';
@@ -69,6 +71,9 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
             initialSettingsProvider.overrideWithValue(result.settings),
             walletRepositoryProvider.overrideWithValue(
               LocalWalletRepository(result.db),
+            ),
+            transactionRepositoryProvider.overrideWithValue(
+              LocalTransactionRepository(result.db),
             ),
           ],
           child: const KimApp(),
