@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kim — your private, offline personal finance workspace.">
+  <meta name="theme-color" content="#122C36">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Kim">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="wallet.svg">
+  <link rel="manifest" href="manifest.json">
+  <title>Kim</title>
+  <style>body{margin:0;background:#f4f7f6}#loading{height:100vh;display:grid;place-items:center;font:600 20px system-ui;color:#087f68}</style>
+</head>
+<body>
+  <div id="loading" aria-label="Kim">Kim</div>
+  <script>window.addEventListener('flutter-first-frame',()=>document.getElementById('loading')?.remove());</script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
