@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "checks": [
+    "Arabic RTL desktop dashboard and accessible navigation",
+    "English and dark theme controls apply",
+    "Localized information dialog opens and closes",
+    "All financial sections navigate to real empty states",
+    "Language and theme survive full page reload",
+    "Offline reload restores app, settings and navigation",
+    "Arabic RTL mobile navigation and settings",
+    "Short desktop sidebar remains usable",
+    "7 JavaScript money/ID checks passed",
+    "No external requests or browser runtime exceptions"
+  ],
+  "cachedFiles": 42,
+  "externalRequests": [],
+  "runtimeErrors": []
+}
