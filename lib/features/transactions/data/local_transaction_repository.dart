@@ -165,6 +165,9 @@ final class LocalTransactionRepository implements TransactionRepository {
     final value = await store.record(id).get(txn);
     if (value == null) throw const WalletFailure('notFound');
     final current = FinancialTransaction.fromJson(id, value);
+    if (current.linkedTransferId.isNotEmpty) {
+      throw const WalletFailure('linkedTransfer');
+    }
     if (current.revision != revision) throw const WalletFailure('conflict');
     if (current.deleted) throw const WalletFailure('deleted');
     final ledger = await LocalWalletRepository.entries.find(

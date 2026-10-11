@@ -8,7 +8,7 @@ async function semantics(page) { await page.waitForSelector('flt-semantics-place
 async function text(page,expected) { await page.waitForFunction(t=>(document.body.innerText+'\n'+[...document.querySelectorAll('[aria-label]')].map(e=>e.getAttribute('aria-label')).join('\n')).includes(t),expected); }
 async function body(page) { return page.locator('body').ariaSnapshot(); }
 // Flutter canvas route animations are not represented by DOM actionability.
-async function button(page,name) { await page.getByRole('button',{name,exact:true}).click(); await page.waitForTimeout(350); }
+async function button(page,name) { await page.bringToFront(); await page.getByRole('button',{name,exact:true}).click(); await page.waitForTimeout(350); }
 async function option(page,name) {await page.getByRole('menuitem',{name,exact:true}).click(); await page.getByRole('menu',{name:'Popup menu',exact:true}).waitFor({state:'detached'}); await page.waitForTimeout(350);}
 async function input(page,name,value) {
   // Flutter semantics inputs forward focus to its real text editing input.

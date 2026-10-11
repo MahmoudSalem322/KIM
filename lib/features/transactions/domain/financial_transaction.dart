@@ -12,6 +12,7 @@ const expenseCategories = [
   'health',
   'shopping',
   'otherExpense',
+  'transferFee',
 ];
 List<String> categoriesFor(TransactionKind kind) =>
     kind == TransactionKind.income ? incomeCategories : expenseCategories;
@@ -84,8 +85,10 @@ final class FinancialTransaction {
     required this.deleted,
     required this.createdAt,
     required this.updatedAt,
+    this.linkedTransferId = '',
   });
   final String id;
+  final String linkedTransferId;
   final TransactionDraft draft;
   final int revision;
   final bool deleted;
@@ -102,6 +105,7 @@ final class FinancialTransaction {
       deleted: value['deleted'] as bool,
       createdAt: DateTime.parse(value['createdAt'] as String),
       updatedAt: DateTime.parse(value['updatedAt'] as String),
+      linkedTransferId: value['linkedTransferId'] as String? ?? '',
     );
   }
 }

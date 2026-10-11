@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../transfers/presentation/transfer_copy.dart';
 
 import '../../../shared/design_system/components.dart';
 import '../../wallets/domain/wallet.dart';
@@ -81,6 +84,7 @@ class _TransactionRowState extends ConsumerState<TransactionRow> {
         widget.editable &&
         !busy &&
         !t.deleted &&
+        t.linkedTransferId.isEmpty &&
         wallet != null &&
         !wallet.wallet.archived;
     final hidden = wallet?.wallet.hidden ?? true;
@@ -181,6 +185,14 @@ class _TransactionRowState extends ConsumerState<TransactionRow> {
                   label: Text(s(busy ? 'saving' : 'delete')),
                 ),
               ],
+            ),
+          if (t.linkedTransferId.isNotEmpty)
+            TextButton.icon(
+              onPressed: () => context.go('/transfers'),
+              icon: const Icon(Icons.swap_horiz_rounded),
+              label: Text(
+                '${TransferCopy.of(context)('linked')}: ${t.linkedTransferId}',
+              ),
             ),
         ],
       ),

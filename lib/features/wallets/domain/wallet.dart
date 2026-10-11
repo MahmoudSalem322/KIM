@@ -93,7 +93,16 @@ final class Wallet {
   );
 }
 
-enum WalletEntryKind { opening, adjustment, income, expense, reversal }
+enum WalletEntryKind {
+  opening,
+  adjustment,
+  income,
+  expense,
+  reversal,
+  transferOut,
+  transferIn,
+  transferReversal,
+}
 
 final class WalletEntry {
   const WalletEntry({
@@ -107,9 +116,11 @@ final class WalletEntry {
     required this.reason,
     required this.sequence,
     this.transactionId = '',
+    this.transferId = '',
   });
   final String operationId, walletId, reason;
   final String transactionId;
+  final String transferId;
   final WalletEntryKind kind;
   final Money delta, before, after;
   final DateTime at;
@@ -124,6 +135,7 @@ final class WalletEntry {
     'reason': reason,
     'sequence': sequence,
     if (transactionId.isNotEmpty) 'transactionId': transactionId,
+    if (transferId.isNotEmpty) 'transferId': transferId,
   };
   factory WalletEntry.fromJson(String id, Map<String, Object?> value) =>
       WalletEntry(
@@ -139,6 +151,7 @@ final class WalletEntry {
         reason: value['reason'] as String,
         sequence: value['sequence'] as int,
         transactionId: value['transactionId'] as String? ?? '',
+        transferId: value['transferId'] as String? ?? '',
       );
 }
 
@@ -172,6 +185,16 @@ final class WalletSnapshot {
                   entry.delta.minorUnits == BigInt.zero)) ||
           (entry.kind == WalletEntryKind.adjustment &&
               entry.reason.trim().isEmpty) ||
+          (entry.kind == WalletEntryKind.transferOut &&
+              entry.delta.minorUnits >= BigInt.zero) ||
+          (entry.kind == WalletEntryKind.transferIn &&
+              entry.delta.minorUnits <= BigInt.zero) ||
+          ((entry.kind == WalletEntryKind.transferOut ||
+                  entry.kind == WalletEntryKind.transferIn ||
+                  entry.kind == WalletEntryKind.transferReversal) &&
+              (entry.transferId.isEmpty ||
+                  entry.transactionId.isNotEmpty ||
+                  entry.delta.minorUnits == BigInt.zero)) ||
           entry.before != total ||
           entry.after != total + entry.delta) {
         throw const WalletFailure('integrity');

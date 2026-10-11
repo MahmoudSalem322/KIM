@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../transfers/presentation/transfer_copy.dart';
 
 import '../../../shared/design_system/components.dart';
 import '../domain/wallet.dart';
@@ -68,6 +71,12 @@ class _WalletsPageState extends ConsumerState<WalletsPage> {
           onPressed: () => showWalletEditor(context),
         ),
         const SizedBox(height: 28),
+        TextButton.icon(
+          onPressed: () => context.go('/transfers'),
+          icon: const Icon(Icons.swap_horiz_rounded),
+          label: Text(TransferCopy.of(context)('navigation')),
+        ),
+        const SizedBox(height: 18),
         WalletDataView(
           builder: (all) {
             final active = all.where((s) => !s.wallet.archived).toList();

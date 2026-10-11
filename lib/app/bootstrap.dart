@@ -15,6 +15,8 @@ import '../features/transactions/presentation/transaction_providers.dart';
 import '../shared/design_system/app_theme.dart';
 import '../shared/design_system/components.dart';
 import 'kim_app.dart';
+import '../features/transfers/data/local_transfer_repository.dart';
+import '../features/transfers/presentation/transfer_providers.dart';
 
 typedef BootstrapData = ({
   AppDatabase db,
@@ -74,6 +76,9 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
             ),
             transactionRepositoryProvider.overrideWithValue(
               LocalTransactionRepository(result.db),
+            ),
+            transferRepositoryProvider.overrideWithValue(
+              LocalTransferRepository(result.db),
             ),
           ],
           child: const KimApp(),
