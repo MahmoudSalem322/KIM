@@ -118,12 +118,14 @@ class _TransactionEditorState extends ConsumerState<TransactionEditor> {
   @override
   Widget build(BuildContext context) {
     final s = TransactionCopy.of(context);
-    final live = ref
-        .watch(walletsProvider)
-        .asData
-        ?.value
-        .where((w) => w.wallet.id == walletId)
-        .firstOrNull;
+    final walletState = ref.watch(walletsProvider);
+    final live =
+        (walletState.isLoading || walletState.hasError
+                ? null
+                : walletState.asData)
+            ?.value
+            .where((w) => w.wallet.id == walletId)
+            .firstOrNull;
     final hidden = live?.wallet.hidden ?? true;
     if (hidden && !lastHidden) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

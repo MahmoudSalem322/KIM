@@ -13,6 +13,8 @@ class WalletDataView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => ref
       .watch(walletsProvider)
       .when(
+        skipLoadingOnRefresh: false,
+        skipLoadingOnReload: false,
         data: builder,
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Column(

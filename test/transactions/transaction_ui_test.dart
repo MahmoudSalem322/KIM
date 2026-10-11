@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,6 +20,7 @@ void main() {
   late LocalWalletRepository wallets;
   late LocalTransactionRepository repo;
   late String id;
+  Completer<void>? refreshGate;
   Future<void> mount(WidgetTester tester, {bool ar = false}) async {
     tester.view.physicalSize = ar
         ? const Size(390, 844)
@@ -48,6 +51,11 @@ void main() {
       ProviderScope(
         overrides: [
           walletRepositoryProvider.overrideWithValue(wallets),
+          walletsProvider.overrideWith((ref) async* {
+            final gate = refreshGate;
+            if (gate != null) await gate.future;
+            yield* wallets.watch();
+          }),
           transactionRepositoryProvider.overrideWithValue(repo),
         ],
         child: MaterialApp(
@@ -261,4 +269,61 @@ void main() {
     );
     expect(find.textContaining('7.25'), findsNothing);
   });
+  testWidgets(
+    'refreshing visible wallet data conceals and clears editor until new snapshot',
+    (tester) async {
+      await mount(tester);
+      await tester.runAsync(
+        () => repo.create(
+          WalletOperation.generate(),
+          TransactionDraft(
+            walletId: id,
+            kind: TransactionKind.expense,
+            amount: Money.parse('7.25', Currency('ILS', 2)),
+            category: 'food',
+            date: '2020-01-01',
+          ),
+          {id: 0},
+        ),
+      );
+      for (
+        var i = 0;
+        i < 30 &&
+            find.byKey(const ValueKey('transaction-edit')).evaluate().isEmpty;
+        i++
+      ) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)),
+        );
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.byKey(const ValueKey('transaction-edit')).first);
+      await tester.pumpAndSettle();
+      refreshGate = Completer<void>();
+      addTearDown(() {
+        if (refreshGate != null && !refreshGate!.isCompleted) {
+          refreshGate!.complete();
+        }
+        refreshGate = null;
+      });
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(TransactionsPage)),
+      );
+      container.invalidate(walletsProvider);
+      await tester.pump();
+      await tester.pump();
+      expect(container.read(walletsProvider).isLoading, true);
+      final field = tester.widget<TextFormField>(
+        find.descendant(
+          of: find.byKey(const ValueKey('transaction-amount')),
+          matching: find.byType(TextFormField),
+        ),
+      );
+      expect(field.controller!.text, isEmpty);
+      expect(find.textContaining('7.25'), findsNothing);
+      refreshGate!.complete();
+      refreshGate = null;
+      await tester.pumpAndSettle();
+    },
+  );
 }
