@@ -189,9 +189,14 @@ class WalletDetailPage extends StatelessWidget {
                   const SizedBox(height: 14),
                   Text(s('operation'), style: theme.textTheme.labelSmall),
                   const SizedBox(height: 4),
-                  SelectableText(
-                    entry.operationId,
-                    style: theme.textTheme.bodySmall,
+                  Semantics(
+                    label: entry.operationId,
+                    child: ExcludeSemantics(
+                      child: SelectableText(
+                        entry.operationId,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
                   ),
                 ],
               ),

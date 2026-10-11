@@ -123,6 +123,7 @@ class _WalletEditorState extends ConsumerState<WalletEditor> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 WalletTextField(
+                  enabled: !busy,
                   key: const ValueKey('wallet-name'),
                   label: s('name'),
                   controller: name,
@@ -165,6 +166,7 @@ class _WalletEditorState extends ConsumerState<WalletEditor> {
                   if (selectedCurrency == 'custom') ...[
                     const SizedBox(height: 18),
                     WalletTextField(
+                      enabled: !busy,
                       key: const ValueKey('wallet-code'),
                       label: s('code'),
                       controller: code,
@@ -189,6 +191,7 @@ class _WalletEditorState extends ConsumerState<WalletEditor> {
                   ],
                   const SizedBox(height: 18),
                   WalletTextField(
+                    enabled: !busy,
                     key: const ValueKey('wallet-opening'),
                     label: s('opening'),
                     controller: opening,

@@ -34,6 +34,7 @@ class _WalletAdjustmentState extends ConsumerState<WalletAdjustment> {
   bool busy = false;
   String? error, fingerprint;
   WalletOperation? operation;
+  late bool lastHidden = widget.snapshot.wallet.hidden;
   @override
   void dispose() {
     target.dispose();
@@ -81,7 +82,21 @@ class _WalletAdjustmentState extends ConsumerState<WalletAdjustment> {
   @override
   Widget build(BuildContext context) {
     final s = WalletCopy.of(context);
-    final hidden = widget.snapshot.wallet.hidden;
+    final latest = ref
+        .watch(walletsProvider)
+        .asData
+        ?.value
+        .where((w) => w.wallet.id == widget.snapshot.wallet.id)
+        .firstOrNull;
+    final hidden = latest?.wallet.hidden ?? true;
+    if (hidden && !lastHidden) {
+      // Conceal immediately, then remove the automatically prefilled amount.
+      // Keep the original financial revision so cross-tab writes stay guarded.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(target.clear);
+      });
+    }
+    lastHidden = hidden;
     return PopScope(
       canPop: !busy,
       child: AlertDialog(
@@ -101,7 +116,9 @@ class _WalletAdjustmentState extends ConsumerState<WalletAdjustment> {
                 ),
                 const SizedBox(height: 18),
                 WalletTextField(
+                  enabled: !busy,
                   key: const ValueKey('adjust-target'),
+                  obscureText: hidden,
                   label: s('target'),
                   controller: target,
                   keyboardType: const TextInputType.numberWithOptions(
@@ -113,6 +130,7 @@ class _WalletAdjustmentState extends ConsumerState<WalletAdjustment> {
                 ),
                 const SizedBox(height: 18),
                 WalletTextField(
+                  enabled: !busy,
                   key: const ValueKey('adjust-reason'),
                   label: s('reason'),
                   controller: reason,

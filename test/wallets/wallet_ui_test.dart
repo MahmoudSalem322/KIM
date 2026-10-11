@@ -8,6 +8,7 @@ import 'package:kim/features/settings/data/local_settings_repository.dart';
 import 'package:kim/features/settings/domain/app_settings.dart';
 import 'package:kim/features/settings/presentation/settings_controller.dart';
 import 'package:kim/features/wallets/data/local_wallet_repository.dart';
+import 'package:kim/features/wallets/domain/wallet.dart';
 import 'package:kim/features/wallets/presentation/wallet_providers.dart';
 
 void main() {
@@ -124,4 +125,40 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets('live privacy hides and clears an already open adjustment form', (
+    tester,
+  ) async {
+    final repo = await mount(tester);
+    await create(tester);
+    await tester.tap(find.text('Daily cash'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('wallet-adjust')));
+    await tester.pumpAndSettle();
+    expect(find.text('Current balance: 10.25 ILS'), findsOneWidget);
+    final current = (await tester.runAsync(repo.load))!.single;
+    await tester.runAsync(
+      () => repo.setHidden(
+        WalletOperation.generate(),
+        current.wallet.id,
+        current.wallet.revision,
+        true,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Current balance: 10.25 ILS'), findsNothing);
+    final field = tester.widget<TextFormField>(
+      find.descendant(
+        of: find.byKey(const ValueKey('adjust-target')),
+        matching: find.byType(TextFormField),
+      ),
+    );
+    expect(field.controller!.text, isEmpty);
+    final editable = tester.widget<EditableText>(
+      find.descendant(
+        of: find.byKey(const ValueKey('adjust-target')),
+        matching: find.byType(EditableText),
+      ),
+    );
+    expect(editable.obscureText, true);
+  });
 }
