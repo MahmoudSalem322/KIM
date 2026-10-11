@@ -139,7 +139,7 @@ npm run test:browser --prefix tool
 
 ## GitHub
 
-المستودع: [KIM](https://github.com/MahmoudSalem322/KIM). المرحلة الأولى على main. المرحلة الثانية على feature/wallet-management والثالثة على feature/income-expenses، مع كوميتات خاصة بكل ميزة.
+المستودع: [KIM](https://github.com/MahmoudSalem322/KIM). المرحلتان الأولى والثانية على main بعد دمج PR #1. المرحلة الثانية على feature/wallet-management والثالثة على feature/income-expenses، مع كوميتات خاصة بكل ميزة.
 راجع [خريطة الفروع](docs/git-workflow.md) و[تقرير المرحلة الأولى](docs/phase-1-report.md).
 
 
