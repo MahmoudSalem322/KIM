@@ -12,10 +12,12 @@ class FinancialWalletCard extends StatelessWidget {
     this.moveUp,
     this.moveDown,
     this.orderKey = '',
+    this.showOrdering = true,
   });
   final WalletSnapshot snapshot;
   final Future<void> Function()? moveUp, moveDown;
   final String orderKey;
+  final bool showOrdering;
   @override
   Widget build(BuildContext context) {
     final w = snapshot.wallet, s = WalletCopy.of(context);
@@ -128,7 +130,7 @@ class FinancialWalletCard extends StatelessWidget {
                         action: (repo, op) =>
                             repo.setHidden(op, w.id, w.revision, !w.hidden),
                       ),
-                      if (!w.archived) ...[
+                      if (!w.archived && showOrdering) ...[
                         IconButton(
                           key: ValueKey('up-${w.id}'),
                           tooltip: s('moveUp'),
