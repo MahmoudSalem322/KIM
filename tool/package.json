@@ -7,7 +7,8 @@
     "test:transfers": "node transfer_browser_smoke.cjs",
     "test:dashboard": "node dashboard_browser_smoke.cjs",
     "test:planning": "node planning_browser_smoke.cjs",
-    "test:savings": "node savings_browser_smoke.cjs"
+    "test:savings": "node savings_browser_smoke.cjs",
+    "test:debts": "node debts_browser_smoke.cjs"
   },
   "devDependencies": {
     "playwright": "^1.56.0"

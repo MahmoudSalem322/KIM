@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "legacyMigration": true,
+  "checks": [
+    "Actual phase-seven IndexedDB and offline cache migrate without losing goals or reservations",
+    "Administrative loan record and due status persist without a cash movement",
+    "Explicit original lending and exact partial collection update the selected wallet and outstanding amount",
+    "Repayment editing and cancellation reverse old cash, preserve history and reopen debt; full payment settles it",
+    "Borrowing adds cash, repayments deduct it, and changing payment wallet atomically restores the old wallet",
+    "Overpayment is rejected without changing debt or cash",
+    "Currency and precision stay explicit; ILS wallets are absent from a USD cash form",
+    "Debt and payment persist after an offline reload using only local resources",
+    "Hidden wallet balances also conceal linked debt amounts, status and financial history",
+    "Arabic RTL dark mobile debt page and editor work with the existing navigation",
+    "No browser runtime errors or external resource requests"
+  ],
+  "runtimeErrors": [],
+  "externalRequests": []
+}
