@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "checks": [
+    "Honest empty state and incomplete multi-currency total use real wallets",
+    "Dashboard shortcuts persist income, expense, transfer and fees; exact totals exclude principal and prior period",
+    "Changing calendar period filters actual history while preserving current balance",
+    "Display currency isolates USD and leaves transfers outside income and expenses",
+    "Interactive bar selection and category selection expose exact amounts",
+    "Offline reload and new expense preserve local data and update financial summary",
+    "Hiding a wallet removes aggregate amounts and chart data from accessibility tree",
+    "Arabic RTL dark mobile dashboard renders real balances, wallet cards and actions",
+    "No browser runtime errors or external resource requests"
+  ],
+  "runtimeErrors": [],
+  "externalRequests": []
+}
