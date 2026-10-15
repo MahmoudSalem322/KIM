@@ -21,6 +21,10 @@ class TransferCopy {
 }
 
 const _copy = <String, (String, String)>{
+  'error-reserved': (
+    'هذا التحويل أو تعديله يمس أموالًا محجوزة لأهداف ادخار. حرر التخصيص أولًا من أهداف الادخار.',
+    'This transfer or change affects funds earmarked for savings goals. Release allocations from Savings goals first.',
+  ),
   'title': ('بين محافظك، بكل وضوح', 'Move money with confidence'),
   'subtitle': (
     'تحويلات مترابطة، ورسوم منفصلة، وسعر صرف محفوظ.',

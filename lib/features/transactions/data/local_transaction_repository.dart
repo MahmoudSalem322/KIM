@@ -4,6 +4,7 @@ import 'package:sembast/sembast.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/data/app_database.dart';
+import '../../../core/data/savings_reservations.dart';
 import '../../../core/domain/money.dart';
 import '../../categories/data/local_category_repository.dart';
 import '../../categories/data/category_schema.dart';
@@ -234,6 +235,7 @@ final class LocalTransactionRepository implements TransactionRepository {
           'createdAt': op.at.toIso8601String(),
           'updatedAt': op.at.toIso8601String(),
         });
+        await protectSavings(txn, [draft.walletId]);
       },
     );
     return id;
@@ -302,6 +304,7 @@ final class LocalTransactionRepository implements TransactionRepository {
           'createdAt': current.createdAt.toIso8601String(),
           'updatedAt': op.at.toIso8601String(),
         });
+        await protectSavings(txn, [current.walletId, draft.walletId]);
       },
     );
   }
@@ -340,6 +343,7 @@ final class LocalTransactionRepository implements TransactionRepository {
           'deleted': true,
           'updatedAt': op.at.toIso8601String(),
         });
+        await protectSavings(txn, [current.walletId]);
       },
     );
   }

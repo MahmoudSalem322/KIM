@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../shared/design_system/components.dart';
+import '../../savings/presentation/savings_copy.dart';
 import '../../../shared/widgets/operation_action.dart';
 import '../../categories/presentation/category_providers.dart';
 import '../../categories/presentation/category_widgets.dart';
@@ -65,6 +66,11 @@ class _BudgetsPageState extends ConsumerState<BudgetsPage> {
           spacing: 12,
           runSpacing: 12,
           children: [
+            OutlinedButton.icon(
+              onPressed: () => context.go('/goals'),
+              icon: const Icon(Icons.savings_outlined),
+              label: Text(SavingsCopy.of(context)('navigation')),
+            ),
             FilledButton.icon(
               key: const ValueKey('budget-add'),
               onPressed: () => showBudgetEditor(context),

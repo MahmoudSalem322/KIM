@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:sembast/sembast.dart';
 
 import '../../../core/data/app_database.dart';
+import '../../../core/data/savings_reservations.dart';
 import '../../../core/domain/money.dart';
 import '../domain/wallet.dart';
 import '../domain/wallet_repository.dart';
@@ -205,6 +206,7 @@ final class LocalWalletRepository implements WalletRepository {
               ).toJson(),
             );
         await _update(txn, id, value, op);
+        await protectSavings(txn, [id]);
       },
     );
   }
@@ -256,6 +258,7 @@ final class LocalWalletRepository implements WalletRepository {
         }
         value['archived'] = archived;
         await _update(txn, id, value, op);
+        await protectSavings(txn, [id]);
       },
     );
   }

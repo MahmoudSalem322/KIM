@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/data/app_database.dart';
+import '../features/savings/data/local_savings_repository.dart';
+import '../features/savings/presentation/savings_providers.dart';
 import '../core/data/open_database.dart';
 import '../core/l10n/app_strings.dart';
 import '../features/categories/data/local_category_repository.dart';
@@ -73,6 +75,9 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
         final result = snapshot.requireData;
         return ProviderScope(
           overrides: [
+            savingsRepositoryProvider.overrideWithValue(
+              LocalSavingsRepository(result.db),
+            ),
             categoryRepositoryProvider.overrideWithValue(
               LocalCategoryRepository(result.db),
             ),

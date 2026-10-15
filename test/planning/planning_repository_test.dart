@@ -510,7 +510,7 @@ void main() {
       databaseFactoryIo,
       '${dir.path}/legacy.db',
     );
-    expect(migrated.database.version, 6);
+    expect(migrated.database.version, AppDatabase.schemaVersion);
     expect(
       (await LocalTransactionRepository(
         migrated,
