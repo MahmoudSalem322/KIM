@@ -102,6 +102,9 @@ enum WalletEntryKind {
   transferOut,
   transferIn,
   transferReversal,
+  debtOut,
+  debtIn,
+  debtReversal,
 }
 
 final class WalletEntry {
@@ -117,10 +120,12 @@ final class WalletEntry {
     required this.sequence,
     this.transactionId = '',
     this.transferId = '',
+    this.debtEventId = '',
   });
   final String operationId, walletId, reason;
   final String transactionId;
   final String transferId;
+  final String debtEventId;
   final WalletEntryKind kind;
   final Money delta, before, after;
   final DateTime at;
@@ -136,6 +141,7 @@ final class WalletEntry {
     'sequence': sequence,
     if (transactionId.isNotEmpty) 'transactionId': transactionId,
     if (transferId.isNotEmpty) 'transferId': transferId,
+    if (debtEventId.isNotEmpty) 'debtEventId': debtEventId,
   };
   factory WalletEntry.fromJson(String id, Map<String, Object?> value) =>
       WalletEntry(
@@ -152,6 +158,7 @@ final class WalletEntry {
         sequence: value['sequence'] as int,
         transactionId: value['transactionId'] as String? ?? '',
         transferId: value['transferId'] as String? ?? '',
+        debtEventId: value['debtEventId'] as String? ?? '',
       );
 }
 
@@ -173,6 +180,19 @@ final class WalletSnapshot {
           entry.delta.currency != wallet.currency ||
           entry.before.currency != wallet.currency ||
           entry.after.currency != wallet.currency ||
+          (entry.kind == WalletEntryKind.debtOut &&
+              entry.delta.minorUnits >= BigInt.zero) ||
+          (entry.kind == WalletEntryKind.debtIn &&
+              entry.delta.minorUnits <= BigInt.zero) ||
+          ([
+                WalletEntryKind.debtIn,
+                WalletEntryKind.debtOut,
+                WalletEntryKind.debtReversal,
+              ].contains(entry.kind) &&
+              (entry.debtEventId.isEmpty ||
+                  entry.delta.minorUnits == BigInt.zero ||
+                  entry.transactionId.isNotEmpty ||
+                  entry.transferId.isNotEmpty)) ||
           (previousSequence >= 0 && entry.kind == WalletEntryKind.opening) ||
           (entry.kind == WalletEntryKind.income &&
               entry.delta.minorUnits <= BigInt.zero) ||

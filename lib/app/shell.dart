@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../core/l10n/app_strings.dart';
 import '../features/savings/presentation/savings_copy.dart';
+import '../features/debts/presentation/debt_copy.dart';
 import '../shared/design_system/components.dart';
 import 'destinations.dart';
 
@@ -20,6 +21,7 @@ class AppShell extends StatelessWidget {
           d.path == location ||
           (location == '/categories' && d.path == '/transactions') ||
           (location == '/goals' && d.path == '/budgets') ||
+          (location == '/debts' && d.path == '/wallets') ||
           (location == '/transfers' && d.path == '/wallets') ||
           (d.path != '/' && location.startsWith('${d.path}/')),
     );
@@ -162,6 +164,8 @@ class AppShell extends StatelessWidget {
                           Icon(
                             location == '/goals'
                                 ? Icons.savings_outlined
+                                : location == '/debts'
+                                ? Icons.handshake_outlined
                                 : destinations[active].icon,
                             size: 20,
                             color: colors.primary,
@@ -170,6 +174,8 @@ class AppShell extends StatelessWidget {
                           Text(
                             location == '/goals'
                                 ? SavingsCopy.of(context)('navigation')
+                                : location == '/debts'
+                                ? DebtCopy.of(context)('navigation')
                                 : s(destinations[active].key),
                             style: Theme.of(context).textTheme.titleSmall,
                           ),

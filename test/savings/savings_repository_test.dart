@@ -155,7 +155,7 @@ void main() {
             .get(migrated.database))!['sentinel'],
         'unchanged',
       );
-      expect(migrated.database.version, 7);
+    expect(migrated.database.version, AppDatabase.schemaVersion);
       await migrated.close();
       await open();
     },

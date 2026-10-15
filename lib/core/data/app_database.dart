@@ -5,7 +5,7 @@ import '../../features/categories/data/category_schema.dart';
 
 final class AppDatabase {
   AppDatabase._(this.database);
-  static const schemaVersion = 7;
+  static const schemaVersion = 8;
   static final settings = stringMapStoreFactory.store('settings');
   static final _receipts = stringMapStoreFactory.store('operation_receipts');
   final Database database;
@@ -63,6 +63,11 @@ final class AppDatabase {
             db,
             {'version': 1},
           );
+        }
+        if (oldVersion < 8) {
+          await stringMapStoreFactory.store('schema').record('debts').put(db, {
+            'version': 1,
+          });
         }
       },
     );

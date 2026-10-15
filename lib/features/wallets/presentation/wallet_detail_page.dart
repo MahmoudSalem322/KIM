@@ -12,6 +12,7 @@ import 'wallet_adjustment.dart';
 import 'wallet_widgets.dart';
 import '../../transactions/presentation/transaction_copy.dart';
 import '../../transfers/presentation/transfer_copy.dart';
+import '../../debts/presentation/debt_copy.dart';
 
 class WalletDetailPage extends ConsumerWidget {
   const WalletDetailPage({super.key, required this.id});
@@ -166,12 +167,26 @@ class WalletDetailPage extends ConsumerWidget {
                           WalletEntryKind.transferOut => fs('out'),
                           WalletEntryKind.transferIn => fs('in'),
                           WalletEntryKind.transferReversal => fs('reverse'),
+                          WalletEntryKind.debtIn => DebtCopy.of(context)(
+                            'debtIn',
+                          ),
+                          WalletEntryKind.debtOut => DebtCopy.of(context)(
+                            'debtOut',
+                          ),
+                          WalletEntryKind.debtReversal => DebtCopy.of(context)(
+                            'debtReversal',
+                          ),
                         }, style: theme.textTheme.titleMedium),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Text(entryDate(context, entry.at)),
+                  if (entry.debtEventId.isNotEmpty)
+                    TextButton(
+                      onPressed: () => context.go('/debts'),
+                      child: Text(DebtCopy.of(context)('navigation')),
+                    ),
                   if (entry.reason.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     Text(

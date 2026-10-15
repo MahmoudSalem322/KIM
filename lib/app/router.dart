@@ -10,6 +10,7 @@ import '../features/wallets/presentation/wallet_detail_page.dart';
 import '../features/transactions/presentation/transactions_page.dart';
 import '../features/budgets/presentation/budgets_page.dart';
 import '../features/savings/presentation/savings_page.dart';
+import '../features/debts/presentation/debts_page.dart';
 import '../features/reports/presentation/reports_page.dart';
 import '../features/settings/presentation/settings_page.dart';
 import '../shared/design_system/components.dart';
@@ -59,6 +60,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/goals',
             builder: (_, _) => const PageViewport(child: SavingsPage()),
+          ),
+          GoRoute(
+            path: '/debts',
+            builder: (_, _) => const PageViewport(child: DebtsPage()),
           ),
           GoRoute(
             path: '/reports',
