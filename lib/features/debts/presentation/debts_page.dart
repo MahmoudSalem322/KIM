@@ -262,76 +262,80 @@ class _DebtCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 14),
-          ExpansionTile(
-            internalAddSemanticForOnTap: true,
-            tilePadding: EdgeInsets.zero,
-            title: Text(s('history')),
-            children: [
-              if (snapshot.events.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(s('historyEmpty')),
-                ),
-              for (final e in snapshot.events)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${s(e.draft.kind == DebtEventKind.payment ? 'paymentEvent' : 'principalEvent')} · ${e.draft.date}${e.cancelled ? ' · ${s('cancelled')}' : ''}',
-                        style: theme.textTheme.titleSmall,
-                      ),
-                      Text(byId[e.draft.walletId]?.wallet.name ?? '—'),
-                      if (!hidden)
-                        Text(
-                          '${e.draft.effect(d.draft.direction).decimal} ${e.draft.amount.currency.code}',
-                          textDirection: TextDirection.ltr,
-                        ),
-                      if (e.draft.note.isNotEmpty) Text(e.draft.note),
-                      if (!e.cancelled)
-                        Wrap(
-                          spacing: 8,
-                          children: [
-                            TextButton(
-                              onPressed: hidden
-                                  ? null
-                                  : () => showDebtEditor(
-                                      context,
-                                      debt: snapshot,
-                                      kind: e.draft.kind,
-                                      event: e,
-                                      wallets: wallets,
-                                    ),
-                              child: Text(s('editCash')),
-                            ),
-                            OperationAction(
-                              key: ValueKey(
-                                'debt-cancel-${e.id}-${e.revision}-${d.revision}',
-                              ),
-                              enabled: !hidden,
-                              label: s('cancelCash'),
-                              cancelLabel: s('cancel'),
-                              confirm: s('cancelHint'),
-                              errorText: s.error,
-                              run: (op) =>
-                                  ref.read(debtRepositoryProvider).cancelCash(
-                                    op,
-                                    e.id,
-                                    e.revision,
-                                    d.revision,
-                                    {
-                                      for (final w in wallets)
-                                        w.wallet.id: w.wallet.revision,
-                                    },
-                                  ),
-                            ),
-                          ],
-                        ),
-                    ],
+          Semantics(
+            container: true,
+            explicitChildNodes: true,
+            child: ExpansionTile(
+              internalAddSemanticForOnTap: true,
+              tilePadding: EdgeInsets.zero,
+              title: Text(s('history')),
+              children: [
+                if (snapshot.events.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(s('historyEmpty')),
                   ),
-                ),
-            ],
+                for (final e in snapshot.events)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${s(e.draft.kind == DebtEventKind.payment ? 'paymentEvent' : 'principalEvent')} · ${e.draft.date}${e.cancelled ? ' · ${s('cancelled')}' : ''}',
+                          style: theme.textTheme.titleSmall,
+                        ),
+                        Text(byId[e.draft.walletId]?.wallet.name ?? '—'),
+                        if (!hidden)
+                          Text(
+                            '${e.draft.effect(d.draft.direction).decimal} ${e.draft.amount.currency.code}',
+                            textDirection: TextDirection.ltr,
+                          ),
+                        if (e.draft.note.isNotEmpty) Text(e.draft.note),
+                        if (!e.cancelled)
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              TextButton(
+                                onPressed: hidden
+                                    ? null
+                                    : () => showDebtEditor(
+                                        context,
+                                        debt: snapshot,
+                                        kind: e.draft.kind,
+                                        event: e,
+                                        wallets: wallets,
+                                      ),
+                                child: Text(s('editCash')),
+                              ),
+                              OperationAction(
+                                key: ValueKey(
+                                  'debt-cancel-${e.id}-${e.revision}-${d.revision}',
+                                ),
+                                enabled: !hidden,
+                                label: s('cancelCash'),
+                                cancelLabel: s('cancel'),
+                                confirm: s('cancelHint'),
+                                errorText: s.error,
+                                run: (op) =>
+                                    ref.read(debtRepositoryProvider).cancelCash(
+                                      op,
+                                      e.id,
+                                      e.revision,
+                                      d.revision,
+                                      {
+                                        for (final w in wallets)
+                                          w.wallet.id: w.wallet.revision,
+                                      },
+                                    ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
