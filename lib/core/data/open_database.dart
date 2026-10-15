@@ -1,6 +1,2 @@
-import 'package:sembast_web/sembast_web.dart';
-
-import 'app_database.dart';
-
-Future<AppDatabase> openAppDatabase() =>
-    AppDatabase.open(databaseFactoryWeb, 'mywallet');
+export 'open_database_web.dart'
+    if (dart.library.io) 'open_database_native.dart';
