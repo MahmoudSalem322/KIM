@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "legacyMigration": true,
+  "checks": [
+    "Real phase-five IndexedDB and offline cache upgrade without losing wallets or historic expenses",
+    "Custom name color and icon persist and integrate with the transaction editor and history search",
+    "General and category budgets independently count actual expenses, never add overlapping scopes",
+    "Editing and cancelling a genuinely old expense recompute its historical budget and remove obsolete alerts",
+    "Separate USD and ILS budgets do not mix amounts or currency precisions",
+    "Weekly budgets use their own calendar periods; FX principal is excluded and only source fees count once",
+    "Renaming and archiving categories preserves historic transactions and linked budget/chart labels",
+    "Hidden wallets conceal budget amounts, progress and dashboard alerts",
+    "Offline category budget and expense persist after reload with exact threshold recalculation",
+    "Arabic RTL dark mobile category and budget pages and editor remain usable",
+    "No browser runtime errors or external resource requests"
+  ],
+  "runtimeErrors": [],
+  "externalRequests": []
+}
