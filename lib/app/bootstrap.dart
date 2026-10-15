@@ -5,6 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/data/app_database.dart';
 import '../core/data/open_database.dart';
 import '../core/l10n/app_strings.dart';
+import '../features/categories/data/local_category_repository.dart';
+import '../features/categories/presentation/category_providers.dart';
+import '../features/budgets/data/local_budget_repository.dart';
+import '../features/budgets/presentation/budget_providers.dart';
 import '../features/settings/data/local_settings_repository.dart';
 import '../features/settings/domain/app_settings.dart';
 import '../features/settings/presentation/settings_controller.dart';
@@ -69,6 +73,12 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
         final result = snapshot.requireData;
         return ProviderScope(
           overrides: [
+            categoryRepositoryProvider.overrideWithValue(
+              LocalCategoryRepository(result.db),
+            ),
+            budgetRepositoryProvider.overrideWithValue(
+              LocalBudgetRepository(result.db),
+            ),
             settingsRepositoryProvider.overrideWithValue(result.repository),
             initialSettingsProvider.overrideWithValue(result.settings),
             walletRepositoryProvider.overrideWithValue(

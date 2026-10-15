@@ -483,7 +483,7 @@ void main() {
     wallets = LocalWalletRepository(db);
     transactions = LocalTransactionRepository(db);
     transfers = LocalTransferRepository(db);
-    expect(db.database.version, 5);
+    expect(db.database.version, AppDatabase.schemaVersion);
     expect((await transactions.load()).single.id, tid);
     expect(await balance(a), '98.75');
     expect(await balance(b), '100.00');

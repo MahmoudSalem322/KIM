@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/domain/money.dart';
 import '../../../shared/design_system/components.dart';
+import '../../budgets/presentation/budget_alerts.dart';
 import '../../transactions/domain/financial_transaction.dart';
 import '../../transactions/presentation/transaction_editor.dart';
 import '../../transactions/presentation/transaction_providers.dart';
@@ -313,6 +314,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             },
           ),
           const SizedBox(height: 22),
+          const BudgetAlerts(),
           if (data.concealed)
             WalletCard(
               child: ChartEmpty(

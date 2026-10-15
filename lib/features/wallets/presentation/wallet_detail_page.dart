@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/domain/money.dart';
 import '../../../shared/design_system/components.dart';
+import '../../categories/presentation/category_widgets.dart';
 import '../domain/wallet.dart';
 import 'wallet_copy.dart';
 import 'wallet_editor.dart';
@@ -11,11 +13,11 @@ import 'wallet_widgets.dart';
 import '../../transactions/presentation/transaction_copy.dart';
 import '../../transfers/presentation/transfer_copy.dart';
 
-class WalletDetailPage extends StatelessWidget {
+class WalletDetailPage extends ConsumerWidget {
   const WalletDetailPage({super.key, required this.id});
   final String id;
   @override
-  Widget build(BuildContext context) => WalletDataView(
+  Widget build(BuildContext context, WidgetRef ref) => WalletDataView(
     builder: (all) {
       final matches = all.where((s) => s.wallet.id == id);
       final s = WalletCopy.of(context), theme = Theme.of(context);
@@ -185,13 +187,13 @@ class WalletDetailPage extends StatelessWidget {
                             )
                           : entry.transactionId.isEmpty
                           ? entry.reason
-                          : ts(
-                              entry.kind == WalletEntryKind.reversal
-                                  ? (entry.reason == 'edit'
-                                        ? 'editReversal'
-                                        : 'cancelReversal')
-                                  : entry.reason,
-                            ),
+                          : entry.kind == WalletEntryKind.reversal
+                          ? ts(
+                              entry.reason == 'edit'
+                                  ? 'editReversal'
+                                  : 'cancelReversal',
+                            )
+                          : categoryLabel(context, ref, entry.reason),
                     ),
                   ],
                   const SizedBox(height: 14),

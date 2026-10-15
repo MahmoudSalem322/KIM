@@ -17,6 +17,7 @@ class AppShell extends StatelessWidget {
     final selected = destinations.indexWhere(
       (d) =>
           d.path == location ||
+          (location == '/categories' && d.path == '/transactions') ||
           (location == '/transfers' && d.path == '/wallets') ||
           (d.path != '/' && location.startsWith('${d.path}/')),
     );

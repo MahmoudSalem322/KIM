@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/domain/money.dart';
 import '../../../shared/design_system/components.dart';
+import '../../categories/presentation/category_providers.dart';
+import '../../categories/presentation/category_widgets.dart';
 import '../../wallets/domain/wallet.dart';
 import '../../wallets/presentation/wallet_providers.dart';
 import '../domain/financial_transaction.dart';
@@ -129,6 +131,21 @@ class _TransactionEditorState extends ConsumerState<TransactionEditor> {
   @override
   Widget build(BuildContext context) {
     final s = TransactionCopy.of(context);
+    final categoryState = ref.watch(categoriesProvider);
+    final availableCategories = (categoryState.value ?? [])
+        .where(
+          (c) =>
+              c.draft.kind == kind &&
+              (!c.archived ||
+                  c.id == widget.transaction?.draft.category &&
+                      widget.transaction?.draft.kind == kind),
+        )
+        .toList();
+    if (!categoryState.isLoading &&
+        !categoryState.hasError &&
+        !availableCategories.any((c) => c.id == category)) {
+      category = availableCategories.firstOrNull?.id ?? '';
+    }
     final walletState = ref.watch(walletsProvider);
     final live =
         (walletState.isLoading || walletState.hasError
@@ -174,7 +191,14 @@ class _TransactionEditorState extends ConsumerState<TransactionEditor> {
                       ? null
                       : (value) => setState(() {
                           kind = value.single;
-                          category = categoriesFor(kind).first;
+                          category =
+                              (ref.read(categoriesProvider).value ?? [])
+                                  .where(
+                                    (c) => c.draft.kind == kind && !c.archived,
+                                  )
+                                  .firstOrNull
+                                  ?.id ??
+                              '';
                         }),
                 ),
                 const SizedBox(height: 18),
@@ -205,15 +229,26 @@ class _TransactionEditorState extends ConsumerState<TransactionEditor> {
                 ),
                 const SizedBox(height: 18),
                 DropdownButtonFormField<String>(
-                  key: ValueKey('transaction-category-${kind.name}'),
+                  key: ValueKey(
+                    'transaction-category-${kind.name}-$category-${availableCategories.length}',
+                  ),
                   initialValue: category,
                   isExpanded: true,
                   decoration: InputDecoration(labelText: s('category')),
                   items: [
-                    for (final c in categoriesFor(kind))
-                      DropdownMenuItem(value: c, child: Text(s(c))),
+                    for (final c in availableCategories)
+                      DropdownMenuItem(
+                        value: c.id,
+                        child: Text(categoryLabel(context, ref, c.id)),
+                      ),
+                    if (!availableCategories.any((c) => c.id == category))
+                      DropdownMenuItem(
+                        value: category,
+                        child: Text(s('category')),
+                      ),
                   ],
-                  onChanged: busy
+                  onChanged:
+                      busy || categoryState.isLoading || categoryState.hasError
                       ? null
                       : (value) => setState(() => category = value!),
                 ),
@@ -314,7 +349,13 @@ class _TransactionEditorState extends ConsumerState<TransactionEditor> {
           ),
           FilledButton(
             key: const ValueKey('transaction-save'),
-            onPressed: busy ? null : save,
+            onPressed:
+                busy ||
+                    categoryState.isLoading ||
+                    categoryState.hasError ||
+                    availableCategories.isEmpty
+                ? null
+                : save,
             child: Text(s(busy ? 'saving' : 'save')),
           ),
         ],

@@ -1,3 +1,8 @@
+import 'package:kim/features/categories/data/local_category_repository.dart';
+import 'package:kim/features/categories/presentation/category_providers.dart';
+import 'package:kim/features/budgets/data/local_budget_repository.dart';
+import 'package:kim/features/budgets/presentation/budget_providers.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -75,6 +80,10 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          categoryRepositoryProvider.overrideWithValue(
+            LocalCategoryRepository(db),
+          ),
+          budgetRepositoryProvider.overrideWithValue(LocalBudgetRepository(db)),
           walletRepositoryProvider.overrideWithValue(wallets),
           transactionRepositoryProvider.overrideWithValue(transactions),
           transferRepositoryProvider.overrideWithValue(

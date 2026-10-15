@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../core/l10n/app_strings.dart';
 import '../features/dashboard/presentation/dashboard_page.dart';
+import '../features/categories/presentation/categories_page.dart';
 import '../features/wallets/presentation/wallets_page.dart';
 import '../features/wallets/presentation/wallet_detail_page.dart';
 import '../features/transactions/presentation/transactions_page.dart';
@@ -41,6 +42,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/transactions',
             builder: (_, _) => const PageViewport(child: TransactionsPage()),
+          ),
+          GoRoute(
+            path: '/categories',
+            builder: (_, _) => const PageViewport(child: CategoriesPage()),
           ),
           GoRoute(
             path: '/transfers',

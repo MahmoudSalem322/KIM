@@ -1,3 +1,7 @@
+import 'package:kim/features/categories/data/local_category_repository.dart';
+import 'package:kim/features/categories/presentation/category_providers.dart';
+import 'package:kim/features/budgets/data/local_budget_repository.dart';
+import 'package:kim/features/budgets/presentation/budget_providers.dart';
 import 'package:kim/features/transactions/data/local_transaction_repository.dart';
 import 'package:kim/features/transfers/data/local_transfer_repository.dart';
 import 'package:kim/features/transfers/presentation/transfer_providers.dart';
@@ -33,6 +37,10 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          categoryRepositoryProvider.overrideWithValue(
+            LocalCategoryRepository(db),
+          ),
+          budgetRepositoryProvider.overrideWithValue(LocalBudgetRepository(db)),
           transferRepositoryProvider.overrideWithValue(
             LocalTransferRepository(db),
           ),

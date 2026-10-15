@@ -1,10 +1,11 @@
 import 'package:sembast/sembast.dart';
 
 import '../domain/operation_id.dart';
+import '../../features/categories/data/category_schema.dart';
 
 final class AppDatabase {
   AppDatabase._(this.database);
-  static const schemaVersion = 5;
+  static const schemaVersion = 6;
   static final settings = stringMapStoreFactory.store('settings');
   static final _receipts = stringMapStoreFactory.store('operation_receipts');
   final Database database;
@@ -46,6 +47,13 @@ final class AppDatabase {
         }
         if (oldVersion < 5) {
           await stringMapStoreFactory.store('schema').record('transfers').put(
+            db,
+            {'version': 1},
+          );
+        }
+        if (oldVersion < 6) {
+          await seedCategories(db);
+          await stringMapStoreFactory.store('schema').record('planning').put(
             db,
             {'version': 1},
           );

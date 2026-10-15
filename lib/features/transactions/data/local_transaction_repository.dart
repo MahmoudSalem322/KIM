@@ -5,6 +5,9 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/data/app_database.dart';
 import '../../../core/domain/money.dart';
+import '../../categories/data/local_category_repository.dart';
+import '../../categories/data/category_schema.dart';
+import '../../categories/domain/app_category.dart';
 import '../../wallets/data/local_wallet_repository.dart';
 import '../../wallets/domain/wallet.dart';
 import '../domain/financial_transaction.dart';
@@ -29,7 +32,14 @@ final class LocalTransactionRepository implements TransactionRepository {
             (grouped[entry.transactionId] ??= []).add(entry);
           }
         }
+        final categories = {
+          for (final r in await categoryStore.find(client))
+            r.key: AppCategory.fromJson(r.key, r.value),
+        };
         for (final t in result) {
+          if (categories[t.draft.category]?.draft.kind != t.draft.kind) {
+            throw const WalletFailure('category');
+          }
           _assertEffect(t, grouped[t.id] ?? []);
         }
         result.sort((a, b) {
@@ -202,6 +212,11 @@ final class LocalTransactionRepository implements TransactionRepository {
           throw const WalletFailure('conflict');
         }
         final wallet = await _wallet(txn, draft.walletId, revisions);
+        await LocalCategoryRepository.requireAssignable(
+          txn,
+          draft.category,
+          draft.kind,
+        );
         await _append(
           txn,
           op,
@@ -240,6 +255,14 @@ final class LocalTransactionRepository implements TransactionRepository {
       request('edit', op, [id, revision, draft.toJson()], revisions),
       (txn) async {
         final current = await _current(txn, id, revision);
+        await LocalCategoryRepository.requireAssignable(
+          txn,
+          draft.category,
+          draft.kind,
+          allowArchived:
+              draft.category == current.draft.category &&
+              draft.kind == current.draft.kind,
+        );
         final oldWallet = await _wallet(txn, current.walletId, revisions);
         // Validate the destination before writing; all failures roll back anyway.
         await _wallet(txn, draft.walletId, revisions);

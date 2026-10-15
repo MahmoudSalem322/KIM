@@ -49,7 +49,10 @@ final class TransactionDraft {
     if (walletId.isEmpty || amount.minorUnits <= BigInt.zero) {
       throw const WalletFailure('amount');
     }
-    if (!categoriesFor(kind).contains(category)) {
+    if (!categoriesFor(kind).contains(category) &&
+        !RegExp(
+          r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+        ).hasMatch(category)) {
       throw const WalletFailure('category');
     }
     if (!validTransactionDate(date)) throw const WalletFailure('date');
