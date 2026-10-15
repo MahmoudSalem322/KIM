@@ -1,4 +1,6 @@
 import 'package:kim/features/transactions/data/local_transaction_repository.dart';
+import 'package:kim/features/transfers/data/local_transfer_repository.dart';
+import 'package:kim/features/transfers/presentation/transfer_providers.dart';
 import 'package:kim/features/transactions/presentation/transaction_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +27,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          transferRepositoryProvider.overrideWithValue(
+            LocalTransferRepository(db),
+          ),
           transactionRepositoryProvider.overrideWithValue(
             LocalTransactionRepository(db),
           ),

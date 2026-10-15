@@ -15,16 +15,27 @@ Future<void> showTransactionEditor(
   BuildContext context,
   List<WalletSnapshot> wallets, {
   FinancialTransaction? transaction,
+  TransactionKind initialKind = TransactionKind.expense,
 }) => showDialog<void>(
   context: context,
   barrierDismissible: false,
-  builder: (_) => TransactionEditor(wallets: wallets, transaction: transaction),
+  builder: (_) => TransactionEditor(
+    wallets: wallets,
+    transaction: transaction,
+    initialKind: initialKind,
+  ),
 );
 
 class TransactionEditor extends ConsumerStatefulWidget {
-  const TransactionEditor({super.key, required this.wallets, this.transaction});
+  const TransactionEditor({
+    super.key,
+    required this.wallets,
+    this.transaction,
+    this.initialKind = TransactionKind.expense,
+  });
   final List<WalletSnapshot> wallets;
   final FinancialTransaction? transaction;
+  final TransactionKind initialKind;
   @override
   ConsumerState<TransactionEditor> createState() => _TransactionEditorState();
 }
@@ -35,7 +46,7 @@ class _TransactionEditorState extends ConsumerState<TransactionEditor> {
   late String walletId =
       widget.transaction?.walletId ?? choices.first.wallet.id;
   late TransactionKind kind =
-      widget.transaction?.draft.kind ?? TransactionKind.expense;
+      widget.transaction?.draft.kind ?? widget.initialKind;
   late String category =
       widget.transaction?.draft.category ?? categoriesFor(kind).first;
   late final amount = TextEditingController(
