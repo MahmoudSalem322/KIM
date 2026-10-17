@@ -494,7 +494,7 @@ void main() {
           .get(migrated.database))!['test'],
       'preserved',
     );
-    expect(migrated.database.version, 8);
+    expect(migrated.database.version, AppDatabase.schemaVersion);
     await migrated.close();
   });
 }

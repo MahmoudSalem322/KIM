@@ -10,6 +10,8 @@ import '../features/wallets/presentation/wallet_detail_page.dart';
 import '../features/transactions/presentation/transactions_page.dart';
 import '../features/budgets/presentation/budgets_page.dart';
 import '../features/savings/presentation/savings_page.dart';
+import '../features/recurring/presentation/recurring_page.dart';
+import '../features/notifications/presentation/notifications_page.dart';
 import '../features/debts/presentation/debts_page.dart';
 import '../features/reports/presentation/reports_page.dart';
 import '../features/settings/presentation/settings_page.dart';
@@ -60,6 +62,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/goals',
             builder: (_, _) => const PageViewport(child: SavingsPage()),
+          ),
+          GoRoute(
+            path: '/recurring',
+            builder: (_, _) => const PageViewport(child: RecurringPage()),
+          ),
+          GoRoute(
+            path: '/notifications',
+            builder: (_, _) => const PageViewport(child: NotificationsPage()),
           ),
           GoRoute(
             path: '/debts',

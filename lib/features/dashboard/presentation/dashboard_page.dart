@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/domain/money.dart';
 import '../../savings/presentation/savings_copy.dart';
+import '../../recurring/presentation/recurring_copy.dart';
 import '../../debts/presentation/debt_copy.dart';
 import '../../../shared/design_system/components.dart';
 import '../../budgets/presentation/budget_alerts.dart';
@@ -108,6 +109,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           spacing: 12,
           runSpacing: 12,
           children: [
+            OutlinedButton.icon(
+              onPressed: () => context.go('/recurring'),
+              icon: const Icon(Icons.event_repeat_rounded),
+              label: Text(RecurringCopy.of(context)('navigation')),
+            ),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/notifications'),
+              icon: const Icon(Icons.notifications_outlined),
+              label: Text(RecurringCopy.of(context)('notifications')),
+            ),
             OutlinedButton.icon(
               onPressed: () => context.go('/debts'),
               icon: const Icon(Icons.handshake_outlined),

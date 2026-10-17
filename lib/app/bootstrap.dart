@@ -3,6 +3,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/data/app_database.dart';
+import '../features/recurring/data/local_recurring_repository.dart';
+import '../features/recurring/presentation/recurring_providers.dart';
+import '../features/notifications/data/local_notice_repository.dart';
+import '../features/notifications/presentation/notification_providers.dart';
+import '../features/notifications/presentation/recurring_runtime.dart';
 import '../features/debts/data/local_debt_repository.dart';
 import '../features/debts/presentation/debt_providers.dart';
 import '../features/savings/data/local_savings_repository.dart';
@@ -77,6 +82,12 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
         final result = snapshot.requireData;
         return ProviderScope(
           overrides: [
+            recurringRepositoryProvider.overrideWithValue(
+              LocalRecurringRepository(result.db),
+            ),
+            noticeRepositoryProvider.overrideWithValue(
+              LocalNoticeRepository(result.db),
+            ),
             debtRepositoryProvider.overrideWithValue(
               LocalDebtRepository(result.db),
             ),
@@ -101,7 +112,7 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
               LocalTransferRepository(result.db),
             ),
           ],
-          child: const KimApp(),
+          child: const RecurringRuntime(child: KimApp()),
         );
       }
       return _StartupView(

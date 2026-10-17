@@ -208,37 +208,48 @@ final class LocalTransactionRepository implements TransactionRepository {
     await db.applyOnce(
       op.id,
       request('create', op, [draft.toJson()], revisions),
-      (txn) async {
-        if (await store.record(id).exists(txn)) {
-          throw const WalletFailure('conflict');
-        }
-        final wallet = await _wallet(txn, draft.walletId, revisions);
-        await LocalCategoryRepository.requireAssignable(
-          txn,
-          draft.category,
-          draft.kind,
-        );
-        await _append(
-          txn,
-          op,
-          id,
-          id,
-          wallet,
-          draft.effect,
-          _kind(draft),
-          draft.category,
-        );
-        await store.record(id).put(txn, {
-          ...draft.toJson(),
-          'revision': 0,
-          'deleted': false,
-          'createdAt': op.at.toIso8601String(),
-          'updatedAt': op.at.toIso8601String(),
-        });
-        await protectSavings(txn, [draft.walletId]);
-      },
+      (txn) => createInTransaction(txn, op, draft, revisions),
     );
     return id;
+  }
+
+  /// Shared atomic writer: a recurring occurrence and its cursor must commit
+  /// in the same transaction as the actual expense. No nested transaction.
+  Future<void> createInTransaction(
+    Transaction txn,
+    WalletOperation op,
+    TransactionDraft draft,
+    Map<String, int> revisions,
+  ) async {
+    draft.validate();
+    final id = op.id.value;
+    if (await store.record(id).exists(txn)) {
+      throw const WalletFailure('conflict');
+    }
+    final wallet = await _wallet(txn, draft.walletId, revisions);
+    await LocalCategoryRepository.requireAssignable(
+      txn,
+      draft.category,
+      draft.kind,
+    );
+    await _append(
+      txn,
+      op,
+      id,
+      id,
+      wallet,
+      draft.effect,
+      _kind(draft),
+      draft.category,
+    );
+    await store.record(id).put(txn, {
+      ...draft.toJson(),
+      'revision': 0,
+      'deleted': false,
+      'createdAt': op.at.toIso8601String(),
+      'updatedAt': op.at.toIso8601String(),
+    });
+    await protectSavings(txn, [draft.walletId]);
   }
 
   @override

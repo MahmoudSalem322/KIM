@@ -150,6 +150,7 @@ final class LocalCategoryRepository implements CategoryRepository {
         for (final store in [
           stringMapStoreFactory.store('transactions'),
           stringMapStoreFactory.store('budgets'),
+          stringMapStoreFactory.store('recurring_payments'),
         ]) {
           if ((await store.find(
             txn,
