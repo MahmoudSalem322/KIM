@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "legacyMigration": true,
+  "checks": [
+    "Real schema-eight IndexedDB and offline cache upgrade preserve debts, goals and wallets",
+    "Closing and reopening catches up three actual daily expenses once; subsequent reload never repeats them",
+    "Reminder-only subscriptions do not auto-debit; explicit due recording creates one exact wallet expense",
+    "Pause, future edits, resume and permanent cancellation preserve existing expenses and cash",
+    "Internal center derives real subscription and budget alerts and persists read and dismiss state after reload",
+    "Correcting and deleting a generated expense removes stale budget alerts and never recreates its occurrence",
+    "Debt due alerts disappear after a real complete repayment",
+    "Opt-in browser notifications contain no financial details and preserve the existing offline service worker",
+    "Forced reload during a manual write leaves either all effects or none; retry cannot duplicate the expense",
+    "Offline subscription creation and payment survive a reload in real IndexedDB",
+    "Hidden wallets conceal payment amounts, forecasts and internal alert details",
+    "Arabic RTL dark mobile calendar, subscription editor and notification center remain usable",
+    "No browser runtime errors or external resource requests"
+  ],
+  "runtimeErrors": [],
+  "externalRequests": []
+}
