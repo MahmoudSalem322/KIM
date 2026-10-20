@@ -44,7 +44,7 @@ async function selected(page, name) {
     checks.push('Localized information dialog opens and closes');
     for (const [section,title] of [
       ['Wallets','Your wallets, in one place'], ['Transactions','A clear view of your money'],
-      ['Budgets','Give every goal a plan'], ['Reports','See the bigger picture'],
+      ['Budgets','Give every goal a plan'], ['Reports','Your financial story'],
     ]) {
       await page.getByRole('button',{name:section,exact:true}).click();
       await page.waitForFunction(text=>document.body.innerText.includes(text), title);

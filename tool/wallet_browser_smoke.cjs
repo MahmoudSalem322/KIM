@@ -77,7 +77,7 @@ async function adjust(page,amount,reason) {
  record('Settlement records exact delta before after reason and operation ID');
  await button(page,'Hide balance'); await text(page,'Show balance');
  assert.ok(!(await body(page)).includes('10.25')); assert.ok(!(await body(page)).includes('11.40'));
- await button(page,'Overview'); await text(page,'Withheld while a balance is hidden');
+ await button(page,'Overview'); await text(page,'Amounts hidden for wallet privacy');
  assert.ok(!(await body(page)).includes('11.40')); record('Hidden balances mask detail history and dashboard totals');
  await page.goto(firstUrl); await semantics(page); await button(page,'Show balance'); await text(page,'11.40 ILS');
  await page.reload(); await semantics(page); await text(page,'Everyday cash'); await text(page,'Cash recount');

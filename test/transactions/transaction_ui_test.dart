@@ -247,6 +247,18 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    // The list refreshes from a real asynchronous database stream.
+    for (
+      var i = 0;
+      i < 30 &&
+          find.byKey(const ValueKey('transaction-edit')).evaluate().isEmpty;
+      i++
+    ) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 10)),
+      );
+      await tester.pumpAndSettle();
+    }
     await tester.tap(find.byKey(const ValueKey('transaction-edit')).first);
     await tester.pumpAndSettle();
     await tester.runAsync(
