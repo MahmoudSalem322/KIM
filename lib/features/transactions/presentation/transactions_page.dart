@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../shared/design_system/components.dart';
+import '../../categories/presentation/category_providers.dart';
+import '../../categories/presentation/category_widgets.dart';
+import '../../categories/presentation/planning_copy.dart';
 import '../../wallets/presentation/wallet_widgets.dart';
 import '../domain/financial_transaction.dart';
 import 'transaction_copy.dart';
@@ -32,6 +35,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     final s = TransactionCopy.of(context), theme = Theme.of(context);
+    final categories = ref.watch(categoriesProvider);
     return WalletDataView(
       builder: (wallets) {
         final data = ref.watch(transactionsProvider);
@@ -72,7 +76,11 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                         (t) => query.matches(
                           t,
                           walletName: byId[t.walletId]?.wallet.name ?? '',
-                          categoryName: s(t.draft.category),
+                          categoryName: categoryLabel(
+                            context,
+                            ref,
+                            t.draft.category,
+                          ),
                         ),
                       )
                       .toList();
@@ -102,6 +110,11 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                 const SizedBox(height: 8),
                 Text(s('subtitle')),
                 const SizedBox(height: 24),
+                TextButton.icon(
+                  onPressed: () => context.go('/categories'),
+                  icon: const Icon(Icons.category_outlined),
+                  label: Text(PlanningCopy.of(context)('manageCategories')),
+                ),
                 WalletButton(
                   key: const ValueKey('transaction-add'),
                   label: s('add'),
@@ -141,11 +154,13 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     ], (v) => walletId = v),
                     dropdown(s('allCategories'), category, [
                       ('all', s('allCategories')),
-                      for (final c in [
-                        ...incomeCategories,
-                        ...expenseCategories,
-                      ])
-                        (c, s(c)),
+                      for (final c in categories.value ?? [])
+                        (c.id, categoryLabel(context, ref, c.id)),
+                      if (category != 'all' &&
+                          !(categories.value ?? []).any(
+                            (c) => c.id == category,
+                          ))
+                        (category, categoryLabel(context, ref, category)),
                     ], (v) => category = v),
                     dropdown(s('allStatus'), status, [
                       ('active', s('active')),

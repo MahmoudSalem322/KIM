@@ -4,11 +4,17 @@ import 'package:go_router/go_router.dart';
 
 import '../core/l10n/app_strings.dart';
 import '../features/dashboard/presentation/dashboard_page.dart';
+import '../features/categories/presentation/categories_page.dart';
 import '../features/wallets/presentation/wallets_page.dart';
 import '../features/wallets/presentation/wallet_detail_page.dart';
 import '../features/transactions/presentation/transactions_page.dart';
 import '../features/budgets/presentation/budgets_page.dart';
+import '../features/savings/presentation/savings_page.dart';
+import '../features/recurring/presentation/recurring_page.dart';
+import '../features/notifications/presentation/notifications_page.dart';
+import '../features/debts/presentation/debts_page.dart';
 import '../features/reports/presentation/reports_page.dart';
+import '../features/reports/presentation/currency_management_page.dart';
 import '../features/settings/presentation/settings_page.dart';
 import '../shared/design_system/components.dart';
 import '../shared/widgets/page_viewport.dart';
@@ -43,6 +49,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const PageViewport(child: TransactionsPage()),
           ),
           GoRoute(
+            path: '/categories',
+            builder: (_, _) => const PageViewport(child: CategoriesPage()),
+          ),
+          GoRoute(
             path: '/transfers',
             builder: (_, _) => const PageViewport(child: TransfersPage()),
           ),
@@ -51,8 +61,29 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const PageViewport(child: BudgetsPage()),
           ),
           GoRoute(
+            path: '/goals',
+            builder: (_, _) => const PageViewport(child: SavingsPage()),
+          ),
+          GoRoute(
+            path: '/recurring',
+            builder: (_, _) => const PageViewport(child: RecurringPage()),
+          ),
+          GoRoute(
+            path: '/notifications',
+            builder: (_, _) => const PageViewport(child: NotificationsPage()),
+          ),
+          GoRoute(
+            path: '/debts',
+            builder: (_, _) => const PageViewport(child: DebtsPage()),
+          ),
+          GoRoute(
             path: '/reports',
             builder: (_, _) => const PageViewport(child: ReportsPage()),
+          ),
+          GoRoute(
+            path: '/currencies',
+            builder: (_, _) =>
+                const PageViewport(child: CurrencyManagementPage()),
           ),
           GoRoute(
             path: '/settings',

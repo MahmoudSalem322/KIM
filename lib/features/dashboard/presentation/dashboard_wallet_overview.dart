@@ -34,19 +34,22 @@ class DashboardWalletOverview extends StatelessWidget {
         if (wallets.isEmpty)
           WalletCard(child: Text(s('noWallets')))
         else
-          SizedBox(
-            height: 360,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: wallets.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 16),
-              itemBuilder: (_, i) => SizedBox(
-                width: 285,
-                child: FinancialWalletCard(
-                  snapshot: wallets[i],
-                  showOrdering: false,
-                ),
-              ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var i = 0; i < wallets.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 16),
+                  SizedBox(
+                    width: 285,
+                    child: FinancialWalletCard(
+                      snapshot: wallets[i],
+                      showOrdering: false,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
       ],

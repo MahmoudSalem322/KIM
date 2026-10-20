@@ -1,4 +1,5 @@
 import '../../../core/domain/money.dart';
+import '../../reports/domain/exchange_book.dart';
 import '../../transactions/domain/financial_transaction.dart';
 import '../../wallets/domain/wallet.dart';
 
@@ -47,50 +48,59 @@ final class DashboardSummary {
     required List<FinancialTransaction> transactions,
     required this.currency,
     required this.period,
+    ExchangeBook? exchangeBook,
   }) {
+    final book = ExchangeBook(
+      currency: currency,
+      rates: exchangeBook?.rates ?? [],
+    );
     final active = wallets.where((w) => !w.wallet.archived).toList();
     activeCount = active.length;
-    excludedCurrencies =
-        {
-          for (final w in active)
-            if (w.wallet.currency != currency) w.wallet.currency,
-          for (final t in transactions)
-            if (!t.deleted &&
-                period.contains(t.date) &&
-                t.draft.amount.currency != currency)
-              t.draft.amount.currency,
-        }.toList()..sort(
-          (a, b) => '${a.code}/${a.scale}'.compareTo('${b.code}/${b.scale}'),
-        );
     final selected = transactions
-        .where(
-          (t) =>
-              !t.deleted &&
-              t.draft.amount.currency == currency &&
-              period.contains(t.date),
-        )
+        .where((t) => !t.deleted && period.contains(t.date))
         .toList();
+    final missing = <Currency>{};
+    Money? convert(Money amount) {
+      final converted = book.convert(amount)?.amount;
+      if (converted == null) missing.add(amount.currency);
+      return converted;
+    }
+
+    final converted = <String, Money>{};
+    for (final t in selected) {
+      final amount = convert(t.draft.amount);
+      if (amount != null) converted[t.id] = amount;
+    }
     final relevantIds = selected.map((t) => t.walletId).toSet();
-    concealed = wallets.any(
-      (w) =>
-          w.wallet.hidden &&
-          (w.wallet.currency == currency && !w.wallet.archived ||
-              relevantIds.contains(w.wallet.id)),
+    final knownIds = wallets.map((w) => w.wallet.id).toSet();
+    concealed =
+        !knownIds.containsAll(relevantIds) ||
+        wallets.any(
+          (w) =>
+              w.wallet.hidden &&
+              (!w.wallet.archived || relevantIds.contains(w.wallet.id)),
+        );
+    balance = active.fold(
+      Money(BigInt.zero, currency),
+      (sum, w) => sum + (convert(w.balance) ?? Money(BigInt.zero, currency)),
     );
-    balance = active
-        .where((w) => w.wallet.currency == currency)
-        .fold(Money(BigInt.zero, currency), (sum, w) => sum + w.balance);
+    excludedCurrencies = missing.toList()
+      ..sort(
+        (a, b) => '${a.code}/${a.scale}'.compareTo('${b.code}/${b.scale}'),
+      );
     var incoming = BigInt.zero, outgoing = BigInt.zero;
     final grouped = <String, BigInt>{};
     for (final t in selected) {
+      final amount = converted[t.id];
+      if (amount == null) continue;
       if (t.draft.kind == TransactionKind.income) {
-        incoming += t.draft.amount.minorUnits;
+        incoming += amount.minorUnits;
       } else {
-        outgoing += t.draft.amount.minorUnits;
+        outgoing += amount.minorUnits;
         grouped.update(
           t.draft.category,
-          (v) => v + t.draft.amount.minorUnits,
-          ifAbsent: () => t.draft.amount.minorUnits,
+          (v) => v + amount.minorUnits,
+          ifAbsent: () => amount.minorUnits,
         );
       }
     }
@@ -115,12 +125,14 @@ final class DashboardSummary {
     final ins = List.generate((days / step).ceil(), (_) => BigInt.zero);
     final outs = List.generate(ins.length, (_) => BigInt.zero);
     for (final t in selected) {
+      final amount = converted[t.id];
+      if (amount == null) continue;
       final date = DateTime.parse('${t.date}T00:00:00Z');
       final index = date.difference(start).inDays ~/ step;
       if (t.draft.kind == TransactionKind.income) {
-        ins[index] += t.draft.amount.minorUnits;
+        ins[index] += amount.minorUnits;
       } else {
-        outs[index] += t.draft.amount.minorUnits;
+        outs[index] += amount.minorUnits;
       }
     }
     buckets = List.generate(ins.length, (i) {

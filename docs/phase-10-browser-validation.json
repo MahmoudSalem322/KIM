@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "Reports render a real empty state",
+    "Missing USD exchange rate marks aggregate incomplete without inventing conversion",
+    "Manual exact rate and documented source persist, converting expense57.50 and net42.50 ILS",
+    "Actual browser CSV, OOXML Excel and PDF downloads retain original and converted amounts with valuation provenance",
+    "Wallet filter recalculates report and equal-length comparison",
+    "Category filter restricts real transaction activity",
+    "Period changes refresh charts, current totals and empty state",
+    "Dashboard adopts saved primary USD currency and values both real wallet balances",
+    "Changing display currency uses exact inverse per-entry rounding and preserves original transaction amounts",
+    "Arabic dark responsive reports export a bundled-font Arabic PDF",
+    "Reports, saved rates and exports work after offline reload",
+    "Hidden wallet blocks aggregate amounts and all exports",
+    "Zero browser exceptions and zero external runtime requests"
+  ],
+  "errors": [],
+  "external": [],
+  "downloads": "C:\\Users\\mahmoud\\Documents\\KIM\\.dart_tool\\phase-10-downloads",
+  "at": "2026-10-20T10:31:34.642Z"
+}

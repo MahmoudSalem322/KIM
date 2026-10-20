@@ -5,7 +5,12 @@
     "test:wallets": "node wallet_browser_smoke.cjs",
     "test:transactions": "node transaction_browser_smoke.cjs",
     "test:transfers": "node transfer_browser_smoke.cjs",
-    "test:dashboard": "node dashboard_browser_smoke.cjs"
+    "test:dashboard": "node dashboard_browser_smoke.cjs",
+    "test:planning": "node planning_browser_smoke.cjs",
+    "test:savings": "node savings_browser_smoke.cjs",
+    "test:debts": "node debts_browser_smoke.cjs",
+    "test:recurring": "node recurring_browser_smoke.cjs",
+    "test:reports": "node reports_browser_smoke.cjs"
   },
   "devDependencies": {
     "playwright": "^1.56.0"

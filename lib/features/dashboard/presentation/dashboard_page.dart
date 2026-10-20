@@ -3,7 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/domain/money.dart';
+import '../../reports/domain/exchange_book.dart';
+import '../../reports/presentation/currency_providers.dart';
+import '../../savings/presentation/savings_copy.dart';
+import '../../recurring/presentation/recurring_copy.dart';
+import '../../debts/presentation/debt_copy.dart';
 import '../../../shared/design_system/components.dart';
+import '../../budgets/presentation/budget_alerts.dart';
 import '../../transactions/domain/financial_transaction.dart';
 import '../../transactions/presentation/transaction_editor.dart';
 import '../../transactions/presentation/transaction_providers.dart';
@@ -35,12 +41,19 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final wallets = ref.watch(walletsProvider);
     final transactions = ref.watch(transactionsProvider);
     final transfers = ref.watch(transfersProvider);
+    final exchange = ref.watch(exchangeBookProvider);
     final s = DashboardCopy.of(context);
     // Never use retained snapshots while privacy flags are reloading.
-    if (wallets.isLoading || transactions.isLoading || transfers.isLoading) {
+    if (wallets.isLoading ||
+        transactions.isLoading ||
+        transfers.isLoading ||
+        exchange.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (wallets.hasError || transactions.hasError || transfers.hasError) {
+    if (wallets.hasError ||
+        transactions.hasError ||
+        transfers.hasError ||
+        exchange.hasError) {
       return WalletCard(
         child: Column(
           children: [
@@ -51,6 +64,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ref.invalidate(walletsProvider);
                 ref.invalidate(transactionsProvider);
                 ref.invalidate(transfersProvider);
+                ref.invalidate(exchangeBookProvider);
               },
               child: Text(s('retry')),
             ),
@@ -62,6 +76,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       wallets.requireValue,
       transactions.requireValue,
       transfers.requireValue,
+      exchange.requireValue,
     );
   }
 
@@ -69,15 +84,17 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     List<WalletSnapshot> wallets,
     List<FinancialTransaction> transactions,
     List<WalletTransfer> transfers,
+    ExchangeBook book,
   ) {
     final s = DashboardCopy.of(context), theme = Theme.of(context);
-    final currencies = {for (final w in wallets) w.wallet.currency}.toList()
-      ..sort(
-        (a, b) => '${a.code}/${a.scale}'.compareTo('${b.code}/${b.scale}'),
-      );
+    final currencies =
+        {book.currency, for (final w in wallets) w.wallet.currency}.toList()
+          ..sort(
+            (a, b) => '${a.code}/${a.scale}'.compareTo('${b.code}/${b.scale}'),
+          );
     final currency = currencies.contains(selectedCurrency)
         ? selectedCurrency!
-        : currencies.firstOrNull ?? Currency('ILS', 2);
+        : book.currency;
     final period = preset == 'custom' && custom != null
         ? custom!
         : DashboardPeriod.preset(preset, DateTime.now());
@@ -86,6 +103,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       transactions: transactions,
       currency: currency,
       period: period,
+      exchangeBook: book,
     );
     final active = wallets.where((w) => !w.wallet.archived).toList();
     return Column(
@@ -105,6 +123,26 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           spacing: 12,
           runSpacing: 12,
           children: [
+            OutlinedButton.icon(
+              onPressed: () => context.go('/recurring'),
+              icon: const Icon(Icons.event_repeat_rounded),
+              label: Text(RecurringCopy.of(context)('navigation')),
+            ),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/notifications'),
+              icon: const Icon(Icons.notifications_outlined),
+              label: Text(RecurringCopy.of(context)('notifications')),
+            ),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/debts'),
+              icon: const Icon(Icons.handshake_outlined),
+              label: Text(DebtCopy.of(context)('navigation')),
+            ),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/goals'),
+              icon: const Icon(Icons.savings_outlined),
+              label: Text(SavingsCopy.of(context)('navigation')),
+            ),
             FilledButton.icon(
               key: const ValueKey('dashboard-income'),
               onPressed: active.isEmpty
@@ -238,6 +276,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
           const SizedBox(height: 18),
           Text(s('scope'), style: theme.textTheme.bodySmall),
+          TextButton.icon(
+            onPressed: () => context.go('/currencies'),
+            icon: const Icon(Icons.currency_exchange),
+            label: Text(s('rates')),
+          ),
           if (data.excludedCurrencies.isNotEmpty) ...[
             const SizedBox(height: 12),
             Container(
@@ -313,6 +356,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             },
           ),
           const SizedBox(height: 22),
+          const BudgetAlerts(),
           if (data.concealed)
             WalletCard(
               child: ChartEmpty(

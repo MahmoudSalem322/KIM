@@ -4,6 +4,7 @@ import 'package:sembast/sembast.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/data/app_database.dart';
+import '../../../core/data/savings_reservations.dart';
 import '../../../core/domain/money.dart';
 import '../../wallets/data/local_wallet_repository.dart';
 import '../../wallets/domain/wallet.dart';
@@ -353,6 +354,7 @@ final class LocalTransferRepository implements TransferRepository {
             old?.createdAt.toIso8601String() ?? op.at.toIso8601String(),
         'updatedAt': op.at.toIso8601String(),
       });
+      await protectSavings(txn, involved);
     });
   }
 

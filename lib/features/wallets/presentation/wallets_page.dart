@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../transfers/presentation/transfer_copy.dart';
+import '../../debts/presentation/debt_copy.dart';
 
 import '../../../shared/design_system/components.dart';
 import '../domain/wallet.dart';
@@ -71,6 +72,11 @@ class _WalletsPageState extends ConsumerState<WalletsPage> {
           onPressed: () => showWalletEditor(context),
         ),
         const SizedBox(height: 28),
+        TextButton.icon(
+          onPressed: () => context.go('/debts'),
+          icon: const Icon(Icons.handshake_outlined),
+          label: Text(DebtCopy.of(context)('navigation')),
+        ),
         TextButton.icon(
           onPressed: () => context.go('/transfers'),
           icon: const Icon(Icons.swap_horiz_rounded),

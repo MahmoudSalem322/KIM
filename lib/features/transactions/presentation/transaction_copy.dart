@@ -21,6 +21,10 @@ class TransactionCopy {
 }
 
 const _copy = <String, (String, String)>{
+  'error-reserved': (
+    'هذه العملية ستصرف أموالًا محجوزة لأهداف ادخار. حرر التخصيص أولًا من أهداف الادخار.',
+    'This would spend funds earmarked for savings goals. Release allocations from Savings goals first.',
+  ),
   'title': ('سجل أموالك، بوضوح', 'A clear view of your money'),
   'subtitle': (
     'دخل ومصاريف فعلية، وأرصدة تتحدث مع كل عملية.',

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/l10n/app_strings.dart';
+import '../features/savings/presentation/savings_copy.dart';
+import '../features/debts/presentation/debt_copy.dart';
+import '../features/recurring/presentation/recurring_copy.dart';
+import '../features/reports/presentation/currency_copy.dart';
 import '../shared/design_system/components.dart';
 import 'destinations.dart';
 
@@ -17,6 +21,12 @@ class AppShell extends StatelessWidget {
     final selected = destinations.indexWhere(
       (d) =>
           d.path == location ||
+          (location == '/categories' && d.path == '/transactions') ||
+          (location == '/recurring' && d.path == '/transactions') ||
+          (location == '/notifications' && d.path == '/settings') ||
+          (location == '/currencies' && d.path == '/reports') ||
+          (location == '/goals' && d.path == '/budgets') ||
+          (location == '/debts' && d.path == '/wallets') ||
           (location == '/transfers' && d.path == '/wallets') ||
           (d.path != '/' && location.startsWith('${d.path}/')),
     );
@@ -157,13 +167,33 @@ class AppShell extends StatelessWidget {
                       children: [
                         if (wide) ...[
                           Icon(
-                            destinations[active].icon,
+                            location == '/goals'
+                                ? Icons.savings_outlined
+                                : location == '/currencies'
+                                ? Icons.currency_exchange
+                                : location == '/debts'
+                                ? Icons.handshake_outlined
+                                : location == '/recurring'
+                                ? Icons.event_repeat_rounded
+                                : location == '/notifications'
+                                ? Icons.notifications_outlined
+                                : destinations[active].icon,
                             size: 20,
                             color: colors.primary,
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            s(destinations[active].key),
+                            location == '/goals'
+                                ? SavingsCopy.of(context)('navigation')
+                                : location == '/currencies'
+                                ? CurrencyCopy.of(context)('title')
+                                : location == '/debts'
+                                ? DebtCopy.of(context)('navigation')
+                                : location == '/recurring'
+                                ? RecurringCopy.of(context)('navigation')
+                                : location == '/notifications'
+                                ? RecurringCopy.of(context)('notifications')
+                                : s(destinations[active].key),
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                         ] else
@@ -172,6 +202,11 @@ class AppShell extends StatelessWidget {
                             child: _Brand(compact: true),
                           ),
                         const Spacer(),
+                        IconButton(
+                          tooltip: RecurringCopy.of(context)('notifications'),
+                          onPressed: () => context.go('/notifications'),
+                          icon: const Icon(Icons.notifications_outlined),
+                        ),
                         if (wide)
                           StatusPill(
                             label: s('local'),

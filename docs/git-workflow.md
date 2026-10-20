@@ -44,3 +44,33 @@ PR #1 على GitHub؛ main عند `3cce359` يتضمن المرحلتين الأ
 المرحلة الخامسة على `feature/dashboard` من `main` عند `c5b65aa` الذي يتضمن
 دمج المرحلة الرابعة عبر PR #3. التنفيذ والاختبارات محلية على هذا الفرع؛ لا
 دفع ولا دمج في main دون طلب المستخدم. راجع [تقرير المرحلة الخامسة](phase-5-report.md).
+
+المرحلة الخامسة رُفعت إلى `origin/feature/dashboard` عند `15fa9fd`، ولها
+[طلب مراجعة مسودة #4](https://github.com/MahmoudSalem322/KIM/pull/4).
+المرحلة السادسة على `feature/categories-budgets`: أُنشئت من `main` الحالي
+عند `c5b65aa` ثم أضيف اعتماد الخامسة fast-forward إلى `15fa9fd` داخل الفرع.
+لم يُدمج طلب الخامسة في main خلال هذه الجلسة. تغييرات السادسة محلية إلى أن
+يطلب المستخدم رفعها. راجع [تقرير المرحلة السادسة](phase-6-report.md).
+
+المرحلة السابعة أذن بها المستخدم صراحة، على `feature/savings-goals`.
+أُنشئ الفرع من `main` الحالي عند `c5b65aa` ثم أضيف اعتماد السادسة
+fast-forward عند `cce9d1d`. يظل `main` وطلب مراجعة الخامسة دون تعديل.
+تنفيذ أهداف الادخار واختباراتها في كوميت محدود، وتحقق الويب والتوثيق في
+كوميت مستقل. لم تُرفع السادسة أو السابعة لعدم طلب رفعهما.
+
+المرحلة الثامنة على `feature/debts-loans` بإذن المستخدم الصريح. أُنشئت
+من `main` عند `c5b65aa` وأضيف اعتماد السابعة fast-forward عند `4eff2e9`.
+التنفيذ والاختبارات محدودة لنطاق الديون؛ تحقق المتصفح والتوثيق منفصلان.
+لا دفع إلى GitHub ولا دمج في main ضمن هذا الطلب.
+
+المرحلة التاسعة على `feature/recurring-notifications` بإذن المستخدم
+الصريح. أنشئت من `main` عند `c5b65aa` وأضيف اعتماد الثامنة وتهيئة
+Android المحلية fast-forward عند `db683fb`. تنفيذ الاشتراكات والمركز
+والإشعارات واختباراتها مستقل عن تحقق الويب والتوثيق. لم يُرفع الفرع
+أو يُدمج في main ضمن طلب التنفيذ.
+# Phase 10
+
+`feature/reports-analytics` starts from `main` at `c5b65aa`, then includes the
+completed phase-nine dependency at `5f41810`. Reports, manual valuation rates,
+Arabic exports and dashboard valuation are scoped to phase 10. No push or merge
+to main is authorized by the implementation request.

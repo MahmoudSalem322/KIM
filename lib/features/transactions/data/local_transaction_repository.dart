@@ -4,7 +4,11 @@ import 'package:sembast/sembast.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/data/app_database.dart';
+import '../../../core/data/savings_reservations.dart';
 import '../../../core/domain/money.dart';
+import '../../categories/data/local_category_repository.dart';
+import '../../categories/data/category_schema.dart';
+import '../../categories/domain/app_category.dart';
 import '../../wallets/data/local_wallet_repository.dart';
 import '../../wallets/domain/wallet.dart';
 import '../domain/financial_transaction.dart';
@@ -29,7 +33,14 @@ final class LocalTransactionRepository implements TransactionRepository {
             (grouped[entry.transactionId] ??= []).add(entry);
           }
         }
+        final categories = {
+          for (final r in await categoryStore.find(client))
+            r.key: AppCategory.fromJson(r.key, r.value),
+        };
         for (final t in result) {
+          if (categories[t.draft.category]?.draft.kind != t.draft.kind) {
+            throw const WalletFailure('category');
+          }
           _assertEffect(t, grouped[t.id] ?? []);
         }
         result.sort((a, b) {
@@ -197,31 +208,48 @@ final class LocalTransactionRepository implements TransactionRepository {
     await db.applyOnce(
       op.id,
       request('create', op, [draft.toJson()], revisions),
-      (txn) async {
-        if (await store.record(id).exists(txn)) {
-          throw const WalletFailure('conflict');
-        }
-        final wallet = await _wallet(txn, draft.walletId, revisions);
-        await _append(
-          txn,
-          op,
-          id,
-          id,
-          wallet,
-          draft.effect,
-          _kind(draft),
-          draft.category,
-        );
-        await store.record(id).put(txn, {
-          ...draft.toJson(),
-          'revision': 0,
-          'deleted': false,
-          'createdAt': op.at.toIso8601String(),
-          'updatedAt': op.at.toIso8601String(),
-        });
-      },
+      (txn) => createInTransaction(txn, op, draft, revisions),
     );
     return id;
+  }
+
+  /// Shared atomic writer: a recurring occurrence and its cursor must commit
+  /// in the same transaction as the actual expense. No nested transaction.
+  Future<void> createInTransaction(
+    Transaction txn,
+    WalletOperation op,
+    TransactionDraft draft,
+    Map<String, int> revisions,
+  ) async {
+    draft.validate();
+    final id = op.id.value;
+    if (await store.record(id).exists(txn)) {
+      throw const WalletFailure('conflict');
+    }
+    final wallet = await _wallet(txn, draft.walletId, revisions);
+    await LocalCategoryRepository.requireAssignable(
+      txn,
+      draft.category,
+      draft.kind,
+    );
+    await _append(
+      txn,
+      op,
+      id,
+      id,
+      wallet,
+      draft.effect,
+      _kind(draft),
+      draft.category,
+    );
+    await store.record(id).put(txn, {
+      ...draft.toJson(),
+      'revision': 0,
+      'deleted': false,
+      'createdAt': op.at.toIso8601String(),
+      'updatedAt': op.at.toIso8601String(),
+    });
+    await protectSavings(txn, [draft.walletId]);
   }
 
   @override
@@ -240,6 +268,14 @@ final class LocalTransactionRepository implements TransactionRepository {
       request('edit', op, [id, revision, draft.toJson()], revisions),
       (txn) async {
         final current = await _current(txn, id, revision);
+        await LocalCategoryRepository.requireAssignable(
+          txn,
+          draft.category,
+          draft.kind,
+          allowArchived:
+              draft.category == current.draft.category &&
+              draft.kind == current.draft.kind,
+        );
         final oldWallet = await _wallet(txn, current.walletId, revisions);
         // Validate the destination before writing; all failures roll back anyway.
         await _wallet(txn, draft.walletId, revisions);
@@ -279,6 +315,7 @@ final class LocalTransactionRepository implements TransactionRepository {
           'createdAt': current.createdAt.toIso8601String(),
           'updatedAt': op.at.toIso8601String(),
         });
+        await protectSavings(txn, [current.walletId, draft.walletId]);
       },
     );
   }
@@ -317,6 +354,7 @@ final class LocalTransactionRepository implements TransactionRepository {
           'deleted': true,
           'updatedAt': op.at.toIso8601String(),
         });
+        await protectSavings(txn, [current.walletId]);
       },
     );
   }

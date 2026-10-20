@@ -21,6 +21,10 @@ class WalletCopy {
 }
 
 const _copy = <String, (String, String)>{
+  'error-reserved': (
+    'توجد أموال محجوزة لأهداف ادخار. حرر التخصيص أولًا قبل تخفيض الرصيد أو أرشفة المحفظة.',
+    'Funds are earmarked for savings goals. Release allocations before reducing the balance or archiving this wallet.',
+  ),
   'title': ('محافظك، في مكان واحد', 'Your wallets, in one place'),
   'subtitle': (
     'مساحات مستقلة لأموالك، بكل عملاتها.',

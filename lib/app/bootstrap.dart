@@ -3,8 +3,21 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/data/app_database.dart';
+import '../features/recurring/data/local_recurring_repository.dart';
+import '../features/recurring/presentation/recurring_providers.dart';
+import '../features/notifications/data/local_notice_repository.dart';
+import '../features/notifications/presentation/notification_providers.dart';
+import '../features/notifications/presentation/recurring_runtime.dart';
+import '../features/debts/data/local_debt_repository.dart';
+import '../features/debts/presentation/debt_providers.dart';
+import '../features/savings/data/local_savings_repository.dart';
+import '../features/savings/presentation/savings_providers.dart';
 import '../core/data/open_database.dart';
 import '../core/l10n/app_strings.dart';
+import '../features/categories/data/local_category_repository.dart';
+import '../features/categories/presentation/category_providers.dart';
+import '../features/budgets/data/local_budget_repository.dart';
+import '../features/budgets/presentation/budget_providers.dart';
 import '../features/settings/data/local_settings_repository.dart';
 import '../features/settings/domain/app_settings.dart';
 import '../features/settings/presentation/settings_controller.dart';
@@ -15,6 +28,8 @@ import '../features/transactions/presentation/transaction_providers.dart';
 import '../shared/design_system/app_theme.dart';
 import '../shared/design_system/components.dart';
 import 'kim_app.dart';
+import '../features/reports/data/local_exchange_repository.dart';
+import '../features/reports/presentation/currency_providers.dart';
 import '../features/transfers/data/local_transfer_repository.dart';
 import '../features/transfers/presentation/transfer_providers.dart';
 
@@ -69,6 +84,27 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
         final result = snapshot.requireData;
         return ProviderScope(
           overrides: [
+            exchangeRepositoryProvider.overrideWithValue(
+              LocalExchangeRepository(result.db),
+            ),
+            recurringRepositoryProvider.overrideWithValue(
+              LocalRecurringRepository(result.db),
+            ),
+            noticeRepositoryProvider.overrideWithValue(
+              LocalNoticeRepository(result.db),
+            ),
+            debtRepositoryProvider.overrideWithValue(
+              LocalDebtRepository(result.db),
+            ),
+            savingsRepositoryProvider.overrideWithValue(
+              LocalSavingsRepository(result.db),
+            ),
+            categoryRepositoryProvider.overrideWithValue(
+              LocalCategoryRepository(result.db),
+            ),
+            budgetRepositoryProvider.overrideWithValue(
+              LocalBudgetRepository(result.db),
+            ),
             settingsRepositoryProvider.overrideWithValue(result.repository),
             initialSettingsProvider.overrideWithValue(result.settings),
             walletRepositoryProvider.overrideWithValue(
@@ -81,7 +117,7 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
               LocalTransferRepository(result.db),
             ),
           ],
-          child: const KimApp(),
+          child: const RecurringRuntime(child: KimApp()),
         );
       }
       return _StartupView(

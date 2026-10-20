@@ -1,3 +1,10 @@
+import 'package:kim/features/reports/data/local_exchange_repository.dart';
+import 'package:kim/features/reports/presentation/currency_providers.dart';
+import 'package:kim/features/categories/data/local_category_repository.dart';
+import 'package:kim/features/categories/presentation/category_providers.dart';
+import 'package:kim/features/budgets/data/local_budget_repository.dart';
+import 'package:kim/features/budgets/presentation/budget_providers.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -50,6 +57,13 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          exchangeRepositoryProvider.overrideWithValue(
+            LocalExchangeRepository(db),
+          ),
+          categoryRepositoryProvider.overrideWithValue(
+            LocalCategoryRepository(db),
+          ),
+          budgetRepositoryProvider.overrideWithValue(LocalBudgetRepository(db)),
           walletRepositoryProvider.overrideWithValue(wallets),
           walletsProvider.overrideWith((ref) async* {
             final gate = refreshGate;

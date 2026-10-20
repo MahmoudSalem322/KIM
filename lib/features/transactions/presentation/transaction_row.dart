@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../transfers/presentation/transfer_copy.dart';
+import '../../categories/presentation/category_widgets.dart';
 
 import '../../../shared/design_system/components.dart';
 import '../../wallets/domain/wallet.dart';
@@ -117,7 +118,7 @@ class _TransactionRowState extends ConsumerState<TransactionRow> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${s(d.kind.name)} · ${s(d.category)}',
+                      '${s(d.kind.name)} · ${categoryLabel(context, ref, d.category)}',
                       style: theme.textTheme.titleMedium,
                     ),
                     Text(

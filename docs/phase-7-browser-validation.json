@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "legacyMigration": true,
+  "checks": [
+    "Real phase-six IndexedDB and offline cache upgrade preserve wallets, categories, expenses and budgets",
+    "Real goal forms persist name, date, icon, color and exact allocation without changing wallet balances",
+    "Reservations aggregate across goals, reject over-allocation and keep USD and ILS separate",
+    "Target edits validate existing allocations; replacing totals appends exact immutable release history",
+    "Actual expense form refuses reserved funds and accepts spending from the available balance",
+    "Explicit release, actual wallet transfer and destination allocation preserve balances without duplicate income",
+    "A second tab reacts to reservations changing and refuses stale allocation forms",
+    "Closing fully funded goals releases funds, freezes historical completion and retains every contribution",
+    "Offline creation and allocation survive reload in IndexedDB without network services",
+    "Wallet privacy conceals goal amounts, progress and achievement statistics",
+    "Arabic RTL dark mobile goals and editor remain usable alongside the existing navigation",
+    "No browser runtime errors or external resource requests"
+  ],
+  "runtimeErrors": [],
+  "externalRequests": []
+}

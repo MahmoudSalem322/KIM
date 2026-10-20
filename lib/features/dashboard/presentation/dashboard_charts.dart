@@ -1,10 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/domain/money.dart';
 import '../../../shared/design_system/components.dart';
-import '../../transactions/presentation/transaction_copy.dart';
+import '../../categories/presentation/category_providers.dart';
+import '../../categories/presentation/category_widgets.dart';
+import '../../wallets/presentation/wallet_copy.dart' show walletColor;
 import '../domain/dashboard_summary.dart';
 import 'dashboard_copy.dart';
 
@@ -261,14 +264,14 @@ class _FlowChartState extends State<FlowChart> {
   }
 }
 
-class SpendingChart extends StatefulWidget {
+class SpendingChart extends ConsumerStatefulWidget {
   const SpendingChart({super.key, required this.summary});
   final DashboardSummary summary;
   @override
-  State<SpendingChart> createState() => _SpendingChartState();
+  ConsumerState<SpendingChart> createState() => _SpendingChartState();
 }
 
-class _SpendingChartState extends State<SpendingChart> {
+class _SpendingChartState extends ConsumerState<SpendingChart> {
   String? selected;
   @override
   void didUpdateWidget(covariant SpendingChart oldWidget) {
@@ -280,8 +283,20 @@ class _SpendingChartState extends State<SpendingChart> {
   Widget build(BuildContext context) {
     final d = widget.summary,
         s = DashboardCopy.of(context),
-        t = TransactionCopy.of(context);
+        allCategories = ref.watch(categoriesProvider).value ?? [];
     final entries = d.categories.entries.toList();
+    String categoryTitle(String id) => categoryLabel(context, ref, id);
+    final colors = [
+      for (var i = 0; i < entries.length; i++)
+        allCategories.any((c) => c.id == entries[i].key)
+            ? walletColor(
+                allCategories
+                    .firstWhere((c) => c.id == entries[i].key)
+                    .draft
+                    .color,
+              )
+            : _palette[i % _palette.length],
+    ];
     final chosen = selected == null ? null : d.categories[selected];
     return WalletCard(
       child: Column(
@@ -310,6 +325,7 @@ class _SpendingChartState extends State<SpendingChart> {
                       child: CustomPaint(
                         size: const Size(210, 210),
                         painter: _RingPainter(
+                          colors: colors,
                           fractions: entries
                               .map(
                                 (e) => chartFraction(
@@ -330,7 +346,9 @@ class _SpendingChartState extends State<SpendingChart> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            selected == null ? s('expense') : t(selected!),
+                            selected == null
+                                ? s('expense')
+                                : categoryTitle(selected!),
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
@@ -358,7 +376,7 @@ class _SpendingChartState extends State<SpendingChart> {
                           .toInt();
                   final share = '${percent ~/ 10}.${percent % 10}%';
                   final label =
-                      '${t(e.key)}: ${dashboardAmount(e.value)} · $share ${s('share')}';
+                      '${categoryTitle(e.key)}: ${dashboardAmount(e.value)} · $share ${s('share')}';
                   return Tooltip(
                     message: label,
                     child: ListTile(
@@ -368,12 +386,8 @@ class _SpendingChartState extends State<SpendingChart> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      leading: Icon(
-                        Icons.circle,
-                        size: 12,
-                        color: _palette[i % _palette.length],
-                      ),
-                      title: Text(t(e.key)),
+                      leading: Icon(Icons.circle, size: 12, color: colors[i]),
+                      title: Text(categoryTitle(e.key)),
                       subtitle: Text(dashboardAmount(e.value)),
                       trailing: Text(share),
                       onTap: () => setState(
@@ -391,7 +405,12 @@ class _SpendingChartState extends State<SpendingChart> {
 }
 
 class _RingPainter extends CustomPainter {
-  _RingPainter({required this.fractions, required this.selected});
+  _RingPainter({
+    required this.fractions,
+    required this.selected,
+    required this.colors,
+  });
+  final List<Color> colors;
   final List<double> fractions;
   final int selected;
   @override
@@ -403,7 +422,7 @@ class _RingPainter extends CustomPainter {
       final paint = Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = selected == i ? 24 : 18
-        ..color = _palette[i % _palette.length].withValues(
+        ..color = colors[i].withValues(
           alpha: selected < 0 || selected == i ? 1 : .3,
         );
       canvas.drawArc(rect, angle, sweep, false, paint);
