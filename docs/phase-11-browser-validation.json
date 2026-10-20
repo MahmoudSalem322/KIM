@@ -1,0 +1,19 @@
+{
+  "checks": [
+    "Complete plaintext backup downloads real records, exact ledger and settings",
+    "Password-encrypted backup downloads without plaintext wallet data",
+    "Cancelling reviewed restore preserves current data",
+    "Confirmed restore atomically replaces records and downloads pre-restore safety copy",
+    "Local recovery restores the full workspace that existed before replacement",
+    "Persisted global privacy hides balances and revealing them restores individual flags",
+    "PIN lock hides app contents, rejects incorrect PIN and survives reload",
+    "Incorrect encryption password is rejected before confirmation or mutation",
+    "Corrupt backup leaves existing financial data unchanged",
+    "Encrypted restore preserves original exact cash and applies restored settings and PIN policy",
+    "Backup selection, validation, download and atomic restore work after offline reload",
+    "Arabic RTL dark settings and PIN editor fit a narrow mobile viewport",
+    "No browser exceptions or external runtime resources"
+  ],
+  "errors": [],
+  "external": []
+}

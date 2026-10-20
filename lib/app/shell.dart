@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../features/security/presentation/security_controller.dart';
+import '../features/security/presentation/security_copy.dart';
 
 import '../core/l10n/app_strings.dart';
 import '../features/savings/presentation/savings_copy.dart';
@@ -9,12 +13,12 @@ import '../features/reports/presentation/currency_copy.dart';
 import '../shared/design_system/components.dart';
 import 'destinations.dart';
 
-class AppShell extends StatelessWidget {
+class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.location, required this.child});
   final String location;
   final Widget child;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final s = AppStrings.of(context);
     final colors = Theme.of(context).colorScheme;
     final wide = MediaQuery.sizeOf(context).width >= 900;
@@ -202,6 +206,19 @@ class AppShell extends StatelessWidget {
                             child: _Brand(compact: true),
                           ),
                         const Spacer(),
+                        if (ref
+                                .watch(securityControllerProvider)
+                                .value
+                                ?.hasPin ==
+                            true)
+                          IconButton(
+                            key: const ValueKey('lock-workspace'),
+                            tooltip: SecurityCopy.of(context)('lock'),
+                            onPressed: () => ref
+                                .read(securityControllerProvider.notifier)
+                                .lock(),
+                            icon: const Icon(Icons.lock_outline),
+                          ),
                         IconButton(
                           tooltip: RecurringCopy.of(context)('notifications'),
                           onPressed: () => context.go('/notifications'),

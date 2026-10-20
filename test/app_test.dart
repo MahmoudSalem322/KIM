@@ -106,6 +106,7 @@ void main() {
       ),
       TextDirection.rtl,
     );
+    await tester.ensureVisible(find.byKey(const ValueKey('theme-dark')));
     await tester.tap(find.byKey(const ValueKey('theme-dark')));
     await tester.pumpAndSettle();
     expect(

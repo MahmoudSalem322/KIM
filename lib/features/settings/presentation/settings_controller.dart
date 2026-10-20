@@ -33,6 +33,8 @@ final class SettingsController extends Notifier<SettingsState> {
 
   Future<bool> setTheme(AppTheme theme) =>
       _save((current) => current.copyWith(theme: theme));
+  Future<bool> setHideBalances(bool value) =>
+      _save((current) => current.copyWith(hideBalances: value));
 
   Future<bool> _save(AppSettings Function(AppSettings) transform) {
     final job = _pending.then((_) async {

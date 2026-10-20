@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../security/presentation/security_controller.dart';
+import '../../security/presentation/security_copy.dart';
+import '../../security/presentation/security_gate.dart';
+import '../../backup/presentation/backup_panel.dart';
 
 import '../../../core/l10n/app_strings.dart';
 import '../../../shared/design_system/components.dart';
@@ -14,6 +20,8 @@ class SettingsPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final state = ref.watch(settingsControllerProvider);
     final controller = ref.read(settingsControllerProvider.notifier);
+    final security = ref.watch(securityControllerProvider),
+        copy = SecurityCopy.of(context);
     return Column(
       key: const ValueKey('settings-page'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,6 +87,74 @@ class SettingsPage extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 20),
+        _SettingsCard(
+          title: copy('currency'),
+          subtitle: copy('currencyBody'),
+          icon: Icons.currency_exchange,
+          child: OutlinedButton(
+            onPressed: () => context.go('/currencies'),
+            child: Text(copy('currency')),
+          ),
+        ),
+        const SizedBox(height: 20),
+        _SettingsCard(
+          title: copy('title'),
+          subtitle: copy('limits'),
+          icon: Icons.lock_outline,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SwitchListTile(
+                key: const ValueKey('hide-all-balances'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(copy('hide')),
+                subtitle: Text(copy('hideBody')),
+                value: state.settings.hideBalances,
+                onChanged: state.isSaving ? null : controller.setHideBalances,
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  OutlinedButton(
+                    key: const ValueKey('pin-configure'),
+                    onPressed:
+                        security.isLoading ||
+                            ref.watch(securityRepositoryProvider) == null
+                        ? null
+                        : () => showPinEditor(context, ref),
+                    child: Text(
+                      copy(
+                        security.value?.hasPin == true ? 'changePin' : 'setPin',
+                      ),
+                    ),
+                  ),
+                  if (security.value?.hasPin == true) ...[
+                    TextButton(
+                      onPressed: () =>
+                          showPinEditor(context, ref, remove: true),
+                      child: Text(copy('removePin')),
+                    ),
+                    FilledButton(
+                      onPressed: () =>
+                          ref.read(securityControllerProvider.notifier).lock(),
+                      child: Text(copy('lock')),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        _SettingsCard(
+          title: copy('backup'),
+          subtitle: copy('backupBody'),
+          icon: Icons.backup_outlined,
+          child: const BackupPanel(),
         ),
         const SizedBox(height: 20),
         _SettingsCard(

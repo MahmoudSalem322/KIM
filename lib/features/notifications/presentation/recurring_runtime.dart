@@ -10,6 +10,7 @@ import '../../settings/presentation/settings_controller.dart';
 import '../domain/notice.dart';
 import '../platform/reminder_adapter.dart';
 import 'notification_providers.dart';
+import '../../security/presentation/security_controller.dart';
 
 /// Foreground/open/resume processing only. Native scheduled reminders never
 /// debit wallets; financial writes always pass through the atomic processor.
@@ -30,10 +31,13 @@ class _RecurringRuntimeState extends ConsumerState<RecurringRuntime>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.read(processingProvider.notifier).run();
+      if (mounted && workspaceAccessible(ref)) {
+        ref.read(processingProvider.notifier).run();
+      }
     });
     timer = Timer.periodic(const Duration(minutes: 1), (_) {
       if (mounted &&
+          workspaceAccessible(ref) &&
           (lifecycle == null || lifecycle == AppLifecycleState.resumed)) {
         ref.invalidate(noticesProvider);
         ref.read(processingProvider.notifier).run();
@@ -45,7 +49,7 @@ class _RecurringRuntimeState extends ConsumerState<RecurringRuntime>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     lifecycle = state;
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && workspaceAccessible(ref)) {
       ref.invalidate(noticesProvider);
       ref.read(processingProvider.notifier).run();
       queue();
@@ -59,7 +63,7 @@ class _RecurringRuntimeState extends ConsumerState<RecurringRuntime>
   }
 
   Future<void> sync() async {
-    if (syncing || !mounted) return;
+    if (syncing || !mounted || !workspaceAccessible(ref)) return;
     syncing = true;
     dirty = false;
     try {
@@ -143,6 +147,20 @@ class _RecurringRuntimeState extends ConsumerState<RecurringRuntime>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(securityControllerProvider, (previous, next) {
+      if (next.value?.unlocked == true &&
+          previous?.value?.unlocked != true &&
+          !ref.read(workspaceMaintenanceProvider)) {
+        ref.read(processingProvider.notifier).run();
+        queue();
+      }
+    });
+    ref.listen(workspaceMaintenanceProvider, (previous, next) {
+      if (!next && previous == true && workspaceAccessible(ref)) {
+        ref.read(processingProvider.notifier).run();
+        queue();
+      }
+    });
     ref.listen(noticesProvider, (_, _) => queue());
     ref.listen(noticePreferencesProvider, (_, _) => queue());
     return widget.child;
