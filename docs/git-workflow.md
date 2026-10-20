@@ -74,3 +74,9 @@ Android المحلية fast-forward عند `db683fb`. تنفيذ الاشترا�
 completed phase-nine dependency at `5f41810`. Reports, manual valuation rates,
 Arabic exports and dashboard valuation are scoped to phase 10. No push or merge
 to main is authorized by the implementation request.
+# Phase 11
+
+`feature/settings-security-backup` starts from `main` at `c5b65aa`, then includes
+the completed phase-ten dependency at `80342d1`. Security, local backups and
+atomic replacement are scoped to phase 11. Implementation does not authorize
+pushing or merging this branch.
