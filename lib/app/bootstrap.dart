@@ -28,6 +28,11 @@ import '../features/transactions/presentation/transaction_providers.dart';
 import '../shared/design_system/app_theme.dart';
 import '../shared/design_system/components.dart';
 import 'kim_app.dart';
+import 'router.dart' show launchLocationProvider;
+import '../features/security/data/security_repository.dart';
+import '../features/security/presentation/security_controller.dart';
+import '../features/backup/data/backup_repository.dart';
+import '../features/backup/presentation/backup_panel.dart';
 import '../features/reports/data/local_exchange_repository.dart';
 import '../features/reports/presentation/currency_providers.dart';
 import '../features/transfers/data/local_transfer_repository.dart';
@@ -60,6 +65,7 @@ class WorkspaceBootstrap extends StatefulWidget {
 class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
   late Future<BootstrapData> _initialization = _initialize();
   AppDatabase? _db;
+  int _generation = 0;
   Future<BootstrapData> _initialize() async {
     final result = await initializeWorkspace();
     if (!mounted) {
@@ -80,10 +86,34 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
   Widget build(BuildContext context) => FutureBuilder<BootstrapData>(
     future: _initialization,
     builder: (context, snapshot) {
-      if (snapshot.hasData) {
+      if (snapshot.connectionState == ConnectionState.done &&
+          snapshot.hasData) {
         final result = snapshot.requireData;
         return ProviderScope(
+          key: ValueKey(_generation),
           overrides: [
+            launchLocationProvider.overrideWithValue(
+              _generation > 0 ? '/settings' : null,
+            ),
+            securityRepositoryProvider.overrideWithValue(
+              SecurityRepository(result.db),
+            ),
+            backupRepositoryProvider.overrideWithValue(
+              BackupRepository(result.db),
+            ),
+            reloadWorkspaceProvider.overrideWithValue(() async {
+              final settings = await result.repository.load();
+              if (mounted) {
+                setState(() {
+                  _generation++;
+                  _initialization = Future.value((
+                    db: result.db,
+                    repository: result.repository,
+                    settings: settings,
+                  ));
+                });
+              }
+            }),
             exchangeRepositoryProvider.overrideWithValue(
               LocalExchangeRepository(result.db),
             ),

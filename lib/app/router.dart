@@ -21,8 +21,11 @@ import '../shared/widgets/page_viewport.dart';
 import 'shell.dart';
 import '../features/transfers/presentation/transfers_page.dart';
 
+final launchLocationProvider = Provider<String?>((ref) => null);
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
+    initialLocation: ref.watch(launchLocationProvider),
+    overridePlatformDefaultLocation: ref.watch(launchLocationProvider) != null,
     routes: [
       ShellRoute(
         builder: (context, state, child) =>

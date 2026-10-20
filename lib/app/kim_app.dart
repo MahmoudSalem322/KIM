@@ -7,6 +7,7 @@ import '../features/settings/presentation/settings_controller.dart';
 import '../shared/design_system/app_theme.dart';
 import '../core/platform/document_language.dart';
 import 'router.dart';
+import '../features/security/presentation/security_gate.dart';
 
 class KimApp extends ConsumerWidget {
   const KimApp({super.key});
@@ -17,6 +18,9 @@ class KimApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Kim',
       debugShowCheckedModeBanner: false,
+      builder: (context, child) => MaintenanceOverlay(
+        child: SecurityGate(child: child ?? const SizedBox.shrink()),
+      ),
       locale: Locale(settings.languageCode),
       supportedLocales: const [Locale('ar'), Locale('en')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
