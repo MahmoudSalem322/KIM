@@ -47,11 +47,18 @@ Future<WalletSnapshot> savingsWallet(DatabaseClient txn, String id) async {
 /// valid replacements even when an intermediate reversal dips below a reserve.
 Future<void> protectSavings(DatabaseClient txn, Iterable<String> ids) async {
   for (final id in ids.toSet()) {
+    final value = await stringMapStoreFactory
+        .store('wallets')
+        .record(id)
+        .get(txn);
+    if (value == null) throw const WalletFailure('notFound');
+    final wallet = Wallet.fromJson(id, value);
+    final reserved = await reservedInWallet(txn, id, wallet.currency);
+    // Most wallets hold no reservation; skip rebuilding their full history.
+    if (reserved.minorUnits == BigInt.zero) continue;
     final snapshot = await savingsWallet(txn, id);
-    final reserved = await reservedInWallet(txn, id, snapshot.wallet.currency);
-    if (reserved.minorUnits > BigInt.zero &&
-        (snapshot.wallet.archived ||
-            snapshot.balance.minorUnits < reserved.minorUnits)) {
+    if (snapshot.wallet.archived ||
+        snapshot.balance.minorUnits < reserved.minorUnits) {
       throw const WalletFailure('reserved');
     }
   }
