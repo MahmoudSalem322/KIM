@@ -1,3 +1,5 @@
+import 'package:kim/features/reports/data/local_exchange_repository.dart';
+import 'package:kim/features/reports/presentation/currency_providers.dart';
 import 'package:kim/features/categories/data/local_category_repository.dart';
 import 'package:kim/features/categories/presentation/category_providers.dart';
 import 'package:kim/features/budgets/data/local_budget_repository.dart';
@@ -55,6 +57,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          exchangeRepositoryProvider.overrideWithValue(
+            LocalExchangeRepository(db),
+          ),
           categoryRepositoryProvider.overrideWithValue(
             LocalCategoryRepository(db),
           ),

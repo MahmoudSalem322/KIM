@@ -28,6 +28,8 @@ import '../features/transactions/presentation/transaction_providers.dart';
 import '../shared/design_system/app_theme.dart';
 import '../shared/design_system/components.dart';
 import 'kim_app.dart';
+import '../features/reports/data/local_exchange_repository.dart';
+import '../features/reports/presentation/currency_providers.dart';
 import '../features/transfers/data/local_transfer_repository.dart';
 import '../features/transfers/presentation/transfer_providers.dart';
 
@@ -82,6 +84,9 @@ class _WorkspaceBootstrapState extends State<WorkspaceBootstrap> {
         final result = snapshot.requireData;
         return ProviderScope(
           overrides: [
+            exchangeRepositoryProvider.overrideWithValue(
+              LocalExchangeRepository(result.db),
+            ),
             recurringRepositoryProvider.overrideWithValue(
               LocalRecurringRepository(result.db),
             ),

@@ -2,6 +2,9 @@ import 'package:kim/features/categories/data/local_category_repository.dart';
 import 'package:kim/features/categories/presentation/category_providers.dart';
 import 'package:kim/features/budgets/data/local_budget_repository.dart';
 import 'package:kim/features/budgets/presentation/budget_providers.dart';
+import 'package:kim/features/reports/data/local_exchange_repository.dart';
+import 'package:kim/features/reports/domain/exchange_book.dart';
+import 'package:kim/features/reports/presentation/currency_providers.dart';
 
 import 'dart:async';
 
@@ -84,6 +87,9 @@ void main() {
             LocalCategoryRepository(db),
           ),
           budgetRepositoryProvider.overrideWithValue(LocalBudgetRepository(db)),
+          exchangeRepositoryProvider.overrideWithValue(
+            LocalExchangeRepository(db),
+          ),
           walletRepositoryProvider.overrideWithValue(wallets),
           transactionRepositoryProvider.overrideWithValue(transactions),
           transferRepositoryProvider.overrideWithValue(
@@ -275,4 +281,32 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets('saved primary currency updates dashboard and quotes persist', (
+    tester,
+  ) async {
+    await mount(tester);
+    await tester.runAsync(
+      () =>
+          LocalExchangeRepository(db)
+              .save(WalletOperation.generate(), 0, Currency('USD', 2), [
+                ManualRate(
+                  from: Currency('USD', 2),
+                  to: Currency('ILS', 2),
+                  decimal: '3.5',
+                  source: 'Manual',
+                  asOf: '2026-10-20',
+                  updatedAt: DateTime.utc(2026, 10, 20),
+                ),
+              ]),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('dashboard-currency-USD-2')),
+      findsOneWidget,
+    );
+    expect(find.text('112.69 USD'), findsOneWidget);
+    expect(find.text('15.88 USD'), findsWidgets);
+    expect(find.byKey(const ValueKey('dashboard-incomplete')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -14,6 +14,7 @@ import '../features/recurring/presentation/recurring_page.dart';
 import '../features/notifications/presentation/notifications_page.dart';
 import '../features/debts/presentation/debts_page.dart';
 import '../features/reports/presentation/reports_page.dart';
+import '../features/reports/presentation/currency_management_page.dart';
 import '../features/settings/presentation/settings_page.dart';
 import '../shared/design_system/components.dart';
 import '../shared/widgets/page_viewport.dart';
@@ -78,6 +79,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/reports',
             builder: (_, _) => const PageViewport(child: ReportsPage()),
+          ),
+          GoRoute(
+            path: '/currencies',
+            builder: (_, _) =>
+                const PageViewport(child: CurrencyManagementPage()),
           ),
           GoRoute(
             path: '/settings',

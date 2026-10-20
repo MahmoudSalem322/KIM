@@ -1,3 +1,5 @@
+import 'package:kim/features/reports/data/local_exchange_repository.dart';
+import 'package:kim/features/reports/presentation/currency_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -57,6 +59,9 @@ void main() {
     await t.pumpWidget(
       ProviderScope(
         overrides: [
+          exchangeRepositoryProvider.overrideWithValue(
+            LocalExchangeRepository(db),
+          ),
           debtRepositoryProvider.overrideWithValue(debts),
           categoryRepositoryProvider.overrideWithValue(
             LocalCategoryRepository(db),

@@ -5,6 +5,7 @@ import '../core/l10n/app_strings.dart';
 import '../features/savings/presentation/savings_copy.dart';
 import '../features/debts/presentation/debt_copy.dart';
 import '../features/recurring/presentation/recurring_copy.dart';
+import '../features/reports/presentation/currency_copy.dart';
 import '../shared/design_system/components.dart';
 import 'destinations.dart';
 
@@ -23,6 +24,7 @@ class AppShell extends StatelessWidget {
           (location == '/categories' && d.path == '/transactions') ||
           (location == '/recurring' && d.path == '/transactions') ||
           (location == '/notifications' && d.path == '/settings') ||
+          (location == '/currencies' && d.path == '/reports') ||
           (location == '/goals' && d.path == '/budgets') ||
           (location == '/debts' && d.path == '/wallets') ||
           (location == '/transfers' && d.path == '/wallets') ||
@@ -167,6 +169,8 @@ class AppShell extends StatelessWidget {
                           Icon(
                             location == '/goals'
                                 ? Icons.savings_outlined
+                                : location == '/currencies'
+                                ? Icons.currency_exchange
                                 : location == '/debts'
                                 ? Icons.handshake_outlined
                                 : location == '/recurring'
@@ -181,6 +185,8 @@ class AppShell extends StatelessWidget {
                           Text(
                             location == '/goals'
                                 ? SavingsCopy.of(context)('navigation')
+                                : location == '/currencies'
+                                ? CurrencyCopy.of(context)('title')
                                 : location == '/debts'
                                 ? DebtCopy.of(context)('navigation')
                                 : location == '/recurring'

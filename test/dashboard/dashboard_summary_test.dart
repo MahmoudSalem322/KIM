@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:kim/core/data/app_database.dart';
 import 'package:kim/core/domain/money.dart';
+import 'package:kim/features/reports/domain/exchange_book.dart';
 import 'package:kim/features/dashboard/domain/dashboard_summary.dart';
 import 'package:kim/features/wallets/domain/wallet.dart';
 import 'package:kim/features/wallets/data/local_wallet_repository.dart';
@@ -72,11 +73,13 @@ void main() {
   Future<DashboardSummary> summary({
     Currency? currency,
     DashboardPeriod? period,
+    ExchangeBook? exchangeBook,
   }) async => DashboardSummary(
     wallets: await wallets.load(),
     transactions: await transactions.load(),
     currency: currency ?? ils,
     period: period ?? DashboardPeriod.preset('month', DateTime(2026, 10, 15)),
+    exchangeBook: exchangeBook,
   );
 
   test('exact totals derive from stored records, including negatives and huge values after reopen', () async {
@@ -233,6 +236,68 @@ void main() {
       expect(d.expense.decimal, '0.31');
     },
   );
+  test(
+    'manual quotes convert all dashboard totals without touching originals',
+    () async {
+      final a = await wallet(opening: '100'),
+          b = await wallet(currency: usd, opening: '10');
+      await transaction(a, '1');
+      await transaction(b, '2', currency: usd);
+      final book = ExchangeBook(
+        currency: ils,
+        rates: [
+          ManualRate(
+            from: usd,
+            to: ils,
+            decimal: '3.5',
+            source: 'Manual bank receipt',
+            asOf: '2026-10-20',
+            updatedAt: DateTime.utc(2026, 10, 20),
+          ),
+        ],
+      );
+      final d = await summary(exchangeBook: book);
+      expect(d.balance.decimal, '127.00');
+      expect(d.expense.decimal, '8.00');
+      expect(d.categories['food']!.decimal, '8.00');
+      expect(d.excludedCurrencies, isEmpty);
+      expect(
+        d.buckets.fold(BigInt.zero, (v, b) => v + b.expense.minorUnits),
+        d.expense.minorUnits,
+      );
+      final original = (await transactions.load())
+          .singleWhere((t) => t.walletId == b)
+          .draft
+          .amount;
+      expect(original.decimal, '2.00');
+      expect(original.currency, usd);
+      final reverse = await summary(currency: usd, exchangeBook: book);
+      expect(reverse.balance.decimal, '36.29');
+      expect(reverse.expense.decimal, '2.29');
+    },
+  );
+  test('converted hidden foreign wallet conceals aggregate', () async {
+    final id = await wallet(currency: usd, opening: '10');
+    final w = (await wallets.load()).single.wallet;
+    await wallets.setHidden(WalletOperation.generate(), id, w.revision, true);
+    final d = await summary(
+      exchangeBook: ExchangeBook(
+        currency: ils,
+        rates: [
+          ManualRate(
+            from: usd,
+            to: ils,
+            decimal: '3',
+            source: 'Manual',
+            asOf: '2026-10-20',
+            updatedAt: DateTime.utc(2026),
+          ),
+        ],
+      ),
+    );
+    expect(d.balance.decimal, '30.00');
+    expect(d.concealed, true);
+  });
   test('calendar presets handle year boundary and leap days; ratio remains finite for enormous money', () {
     final week = DashboardPeriod.preset('week', DateTime(2026, 1, 3));
     expect(week.from, '2025-12-28');

@@ -1,3 +1,7 @@
+import 'package:kim/features/reports/data/local_exchange_repository.dart';
+import 'package:kim/features/reports/presentation/currency_providers.dart';
+import 'package:kim/features/debts/data/local_debt_repository.dart';
+import 'package:kim/features/debts/presentation/debt_providers.dart';
 import 'package:kim/features/categories/data/local_category_repository.dart';
 import 'package:kim/features/categories/presentation/category_providers.dart';
 import 'package:kim/features/budgets/data/local_budget_repository.dart';
@@ -31,6 +35,10 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          exchangeRepositoryProvider.overrideWithValue(
+            LocalExchangeRepository(db),
+          ),
+          debtRepositoryProvider.overrideWithValue(LocalDebtRepository(db)),
           categoryRepositoryProvider.overrideWithValue(
             LocalCategoryRepository(db),
           ),
@@ -64,7 +72,7 @@ void main() {
       'wallets': 'Your wallets, in one place',
       'transactions': 'A clear view of your money',
       'budgets': 'Give every goal a plan',
-      'reports': 'See the bigger picture',
+      'reports': 'Your financial story',
     }.entries) {
       await tester.tap(find.byKey(ValueKey('nav-${entry.key}')));
       await tester.pumpAndSettle();
