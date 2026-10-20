@@ -6,6 +6,9 @@ _flutter.loader.load({config: {canvasKitBaseUrl: 'canvaskit/'}});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
+    // Offline starts are served by the installed worker; check for updates on
+    // the next online visit instead of logging a failed request.
+    if (!navigator.onLine) return;
     try {
       // Register only release builds produced by tool/build_web.ps1.
       const response = await fetch('offline_worker.js', {cache: 'no-store'});

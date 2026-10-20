@@ -126,5 +126,5 @@ const _copy = <String, (String, String)>{
   'notFound': ('هذه الصفحة غير موجودة', 'This page does not exist'),
   'goHome': ('العودة إلى الرئيسية', 'Back to overview'),
   'menu': ('التنقل', 'Navigation'),
-  'version': ('Kim · الإصدار 0.1.0', 'Kim · version 0.1.0'),
+  'version': ('Kim · الإصدار 1.0.0', 'Kim · version 1.0.0'),
 };
