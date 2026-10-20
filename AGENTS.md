@@ -1,6 +1,6 @@
 # Kim development rules
 
-- Implement one user-approved phase at a time. Phase 11 (Settings, Security & Backup) is authorized; subsequent phases require explicit approval.
+- Implement one user-approved phase at a time. Phase 12 (Quality Assurance, Optimization & Release) is the final authorized phase; new work requires explicit approval.
 - Inspect existing features and dependencies before changes. Preserve working behavior.
 - Use feature-first presentation/domain/data boundaries, Riverpod and GoRouter.
 - Prioritize Flutter Web. Keep runtime offline, local and free of backend or login.

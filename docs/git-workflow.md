@@ -80,3 +80,10 @@ to main is authorized by the implementation request.
 the completed phase-ten dependency at `80342d1`. Security, local backups and
 atomic replacement are scoped to phase 11. Implementation does not authorize
 pushing or merging this branch.
+# Phase 12
+
+`feature/quality-release` starts from `main` at `c5b65aa`, then includes the
+completed phase-eleven dependency at `301ac9a` by fast-forward. Release QA,
+performance, responsive fixes and production web packaging are scoped to
+phase 12, with fixes and verification in separate commits. Version 1.0.0+2.
+No push or merge to main is authorized by the implementation request.

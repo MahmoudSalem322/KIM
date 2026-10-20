@@ -1,0 +1,23 @@
+{
+  "checks": [
+    "Cold start renders the first frame in 1924 ms and removes the HTML loader",
+    "Wallet, income and expense created through the UI keep an exact balance",
+    "Exact balance and English preference survive a full reload",
+    "Service worker precached 28 files (21.69 MiB) for offline use",
+    "Offline reload renders cached app in 765 ms with persisted data",
+    "All 13 routes open offline at 320/768/1440px; unknown routes show the recovery page",
+    "Arabic RTL dark theme renders on 320px phones and tablets while offline",
+    "No page exceptions, console errors or external network requests"
+  ],
+  "metrics": {
+    "coldFirstFrameMs": 1924,
+    "coldRequests": 15,
+    "coldTransferMiB": 13.3,
+    "cachedFiles": 28,
+    "cacheMiB": 21.69,
+    "offlineFirstFrameMs": 765
+  },
+  "errors": [],
+  "consoleErrors": [],
+  "external": []
+}
