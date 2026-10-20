@@ -186,26 +186,29 @@ class AppShell extends ConsumerWidget {
                             color: colors.primary,
                           ),
                           const SizedBox(width: 12),
-                          Text(
-                            location == '/goals'
-                                ? SavingsCopy.of(context)('navigation')
-                                : location == '/currencies'
-                                ? CurrencyCopy.of(context)('title')
-                                : location == '/debts'
-                                ? DebtCopy.of(context)('navigation')
-                                : location == '/recurring'
-                                ? RecurringCopy.of(context)('navigation')
-                                : location == '/notifications'
-                                ? RecurringCopy.of(context)('notifications')
-                                : s(destinations[active].key),
-                            style: Theme.of(context).textTheme.titleSmall,
+                          Expanded(
+                            child: Text(
+                              location == '/goals'
+                                  ? SavingsCopy.of(context)('navigation')
+                                  : location == '/currencies'
+                                  ? CurrencyCopy.of(context)('title')
+                                  : location == '/debts'
+                                  ? DebtCopy.of(context)('navigation')
+                                  : location == '/recurring'
+                                  ? RecurringCopy.of(context)('navigation')
+                                  : location == '/notifications'
+                                  ? RecurringCopy.of(context)('notifications')
+                                  : s(destinations[active].key),
+                              style: Theme.of(context).textTheme.titleSmall,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ] else
-                          const SizedBox(
-                            width: 210,
-                            child: _Brand(compact: true),
-                          ),
-                        const Spacer(),
+                          // Flexible: lock, alerts and storage actions must
+                          // fit beside the brand on 320px phones, and beside
+                          // long page titles on narrow desktops.
+                          const Expanded(child: _Brand(compact: true)),
                         if (ref
                                 .watch(securityControllerProvider)
                                 .value

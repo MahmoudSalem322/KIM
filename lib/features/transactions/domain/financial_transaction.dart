@@ -17,13 +17,24 @@ const expenseCategories = [
 List<String> categoriesFor(TransactionKind kind) =>
     kind == TransactionKind.income ? incomeCategories : expenseCategories;
 
+final _calendarDate = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$');
+final _uuidV4 = RegExp(
+  r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+);
+
+/// Runs for every stored record on each load, so it avoids a local time-zone
+/// lookup: a UTC calendar check rejects the same impossible dates.
 bool validTransactionDate(String value) {
-  if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) return false;
-  final date = DateTime.tryParse(value);
-  return date != null &&
-      date.year >= 1900 &&
-      date.year <= 2100 &&
-      calendarDate(date) == value;
+  final match = _calendarDate.firstMatch(value);
+  if (match == null) return false;
+  final year = int.parse(match[1]!),
+      month = int.parse(match[2]!),
+      day = int.parse(match[3]!);
+  if (year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1) {
+    return false;
+  }
+  final date = DateTime.utc(year, month, day);
+  return date.month == month && date.day == day;
 }
 
 String calendarDate(DateTime date) =>
@@ -50,9 +61,7 @@ final class TransactionDraft {
       throw const WalletFailure('amount');
     }
     if (!categoriesFor(kind).contains(category) &&
-        !RegExp(
-          r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
-        ).hasMatch(category)) {
+        !_uuidV4.hasMatch(category)) {
       throw const WalletFailure('category');
     }
     if (!validTransactionDate(date)) throw const WalletFailure('date');

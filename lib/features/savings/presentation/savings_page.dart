@@ -343,7 +343,7 @@ class _GoalCard extends ConsumerWidget {
               container: true,
               explicitChildNodes: true,
               child: LinearProgressIndicator(
-                value: snapshot.progress,
+                value: snapshot.progress.clamp(0, 1),
                 minHeight: 10,
                 borderRadius: BorderRadius.circular(8),
                 color: color,

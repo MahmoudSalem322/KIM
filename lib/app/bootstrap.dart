@@ -214,7 +214,12 @@ class _StartupView extends StatelessWidget {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Theme(
-          data: AppThemeData.build(Brightness.light, 'ar'),
+          // Saved theme is unknown until storage opens; follow the system so
+          // dark devices do not flash a light screen during startup.
+          data: AppThemeData.build(
+            View.of(context).platformDispatcher.platformBrightness,
+            'ar',
+          ),
           child: child,
         ),
       ),

@@ -1,7 +1,10 @@
+final _currencyCode = RegExp(r'^[A-Z]{3}$');
+final _exactDecimal = RegExp(r'^-?\d+(\.\d+)?$');
+
 /// Currency scale is explicit: do not infer it from locale or exchange rates.
 final class Currency {
   Currency(this.code, this.scale) {
-    if (!RegExp(r'^[A-Z]{3}$').hasMatch(code) || scale < 0 || scale > 6) {
+    if (!_currencyCode.hasMatch(code) || scale < 0 || scale > 6) {
       throw ArgumentError('Invalid currency code or minor-unit scale');
     }
   }
@@ -27,7 +30,7 @@ final class Money {
           .replaceAll('٠١٢٣٤٥٦٧٨٩'[i], '$i')
           .replaceAll('۰۱۲۳۴۵۶۷۸۹'[i], '$i');
     }
-    if (!RegExp(r'^-?\d+(\.\d+)?$').hasMatch(normalized)) {
+    if (!_exactDecimal.hasMatch(normalized)) {
       throw const FormatException('Enter an exact decimal amount');
     }
     final negative = normalized.startsWith('-');

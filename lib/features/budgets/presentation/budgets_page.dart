@@ -274,7 +274,9 @@ class BudgetCard extends ConsumerWidget {
                 color: color,
                 backgroundColor: color.withValues(alpha: .12),
                 semanticsLabel: s('spent'),
-                semanticsValue: usage.percentage,
+                // A progress bar announces 0–100%; the exact overspend
+                // percentage stays in the visible text below.
+                semanticsValue: usage.progress >= 1 ? '100%' : usage.percentage,
               ),
             ),
             const SizedBox(height: 8),
